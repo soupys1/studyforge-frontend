@@ -16,7 +16,7 @@ export async function generateNotes(document_id : string , topic : string) {
     const params = new URLSearchParams({ document_id, topic });
 
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/notes?${params}`, {
-    method: "POST",
+    method: "GET",
     
     });
 
@@ -29,7 +29,7 @@ export async function generateFlashcards(document_id : string , topic : string) 
     const params = new URLSearchParams({ document_id, topic });
 
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/flashcards?${params}`, {
-    method: "POST",
+    method: "GET",
     
     });
 
@@ -41,7 +41,7 @@ export async function generateFlashcards(document_id : string , topic : string) 
 export async function generateQuiz(document_id : string , topic : string) {
     const params = new URLSearchParams({ document_id, topic });
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/quiz?${params}`, {
-    method: "POST",
+    method: "GET",
     
     });
 

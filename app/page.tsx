@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import FileUpload from "@/components/FileUpload";
+import NoteCard from "@/components/NoteCard";
 
 export default function Home() {
   const [documentId, setDocumentId] = useState<string | null>(null);
@@ -8,7 +9,7 @@ export default function Home() {
   return (
     <main>
       <FileUpload onUploadComplete={setDocumentId} />
-      {documentId && <p>Document ID: {documentId}</p>}
+      {documentId && <NoteCard documentId={documentId} />}
     </main>
   );
 }
