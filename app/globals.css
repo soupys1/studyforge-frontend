@@ -1,26 +1,228 @@
 @import "tailwindcss";
 
+/* ── Design tokens ──────────────────────────────── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --color-bg:       #f2f2f3;
+  --color-text:     #1d1f20;
+  --color-accent:   #5980a6;
+  --sf-ok:          #3f7d5c;
+  --sf-bad:         #a34b42;
+  --sf-warm:        #b07d2e;
+  --sf-ink:         #5b6478;
+  --color-panel:    #ffffff;
+  --color-border:   #d4d6d9;
+  --color-input-bg: #f8f8f9;
+  --color-muted:    #6b7280;
+  --color-tag-bg:   #eef1f4;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+[data-theme="dark"] {
+  --color-bg:       #141618;
+  --color-text:     #e9eaec;
+  --color-accent:   #94bce3;
+  --sf-ok:          #6fb28d;
+  --sf-bad:         #e08b80;
+  --sf-warm:        #e0b06a;
+  --sf-ink:         #8f9bb3;
+  --color-panel:    #1e2124;
+  --color-border:   #2c3038;
+  --color-input-bg: #1a1d20;
+  --color-muted:    #8f9bb3;
+  --color-tag-bg:   #252a30;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+/* ── Reset ──────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+/* ── Base ───────────────────────────────────────── */
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--color-bg);
+  color: var(--color-text);
   font-family: Arial, Helvetica, sans-serif;
+  font-size: 15px;
+  line-height: 1.58;
+  transition: background 0.18s ease, color 0.18s ease;
+}
+
+h1, h2, h3, h4 {
+  font-family: "Times New Roman", Times, serif;
+  font-weight: 400;
+  text-transform: uppercase;
+  line-height: 0.94;
+}
+
+/* ── Animations ─────────────────────────────────── */
+@keyframes sf-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.38; }
+}
+
+@keyframes sf-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes sf-fade-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Skeleton ───────────────────────────────────── */
+.skeleton {
+  background: var(--color-border);
+  border-radius: 6px;
+  animation: sf-pulse 1.2s ease-in-out infinite;
+}
+.skeleton:nth-child(2) { animation-delay: 0.15s; }
+.skeleton:nth-child(3) { animation-delay: 0.30s; }
+.skeleton:nth-child(4) { animation-delay: 0.45s; }
+
+/* ── Flashcard 3-D flip ─────────────────────────── */
+.card-scene { perspective: 900px; }
+
+.card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.52s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-style: preserve-3d;
+}
+
+.card-inner.flipped { transform: rotateY(180deg); }
+
+.card-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 36px;
+  text-align: center;
+}
+
+.card-face--back {
+  transform: rotateY(180deg);
+  background: var(--color-accent);
+  color: #fff;
+}
+
+/* ── Shared UI ──────────────────────────────────── */
+.sf-panel {
+  background: var(--color-panel);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+}
+
+.sf-input {
+  width: 100%;
+  background: var(--color-input-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  color: var(--color-text);
+  outline: none;
+  transition: border-color 0.15s;
+}
+.sf-input:focus { border-color: var(--color-accent); }
+.sf-input::placeholder { color: var(--color-muted); }
+
+.sf-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 18px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: opacity 0.15s;
+  white-space: nowrap;
+}
+.sf-btn-primary { background: var(--color-accent); color: #fff; }
+.sf-btn-ghost {
+  background: transparent;
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+}
+.sf-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+.sf-btn:not(:disabled):hover { opacity: 0.78; }
+
+.sf-kicker {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.17em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+
+.sf-label {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.sf-tag {
+  display: inline-block;
+  background: var(--color-tag-bg);
+  color: var(--color-muted);
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+}
+
+/* Alert boxes */
+.sf-alert {
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 13.5px;
+  line-height: 1.52;
+}
+.sf-alert-bad  { background: color-mix(in srgb, var(--sf-bad)  12%, transparent); color: var(--sf-bad);  border: 1px solid color-mix(in srgb, var(--sf-bad)  28%, transparent); }
+.sf-alert-warm { background: color-mix(in srgb, var(--sf-warm) 12%, transparent); color: var(--sf-warm); border: 1px solid color-mix(in srgb, var(--sf-warm) 28%, transparent); }
+.sf-alert-ok   { background: color-mix(in srgb, var(--sf-ok)   12%, transparent); color: var(--sf-ok);   border: 1px solid color-mix(in srgb, var(--sf-ok)   28%, transparent); }
+
+/* Registration marks */
+.sf-reg {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-color: var(--color-border);
+  border-style: solid;
+  opacity: 0.55;
+  pointer-events: none;
+}
+.sf-reg-tl { top: 8px;  left: 8px;  border-width: 1px 0 0 1px; }
+.sf-reg-tr { top: 8px;  right: 8px; border-width: 1px 1px 0 0; }
+.sf-reg-bl { bottom: 8px; left: 8px;  border-width: 0 0 1px 1px; }
+.sf-reg-br { bottom: 8px; right: 8px; border-width: 0 1px 1px 0; }
+
+/* Generator section reveal */
+.sf-generators {
+  animation: sf-fade-in 0.4s ease forwards;
+}
+
+/* Generator layout */
+.sf-generator {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 28px;
+  align-items: start;
 }
