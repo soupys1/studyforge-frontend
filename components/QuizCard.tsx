@@ -20,20 +20,24 @@ interface QuizCardProps {
   index: number;
 }
 
+const OPTION_LETTERS = ["A", "B", "C", "D", "E", "F"];
+
 export default function QuizCard({ documentId, index }: QuizCardProps) {
-  const [topic,     setTopic]     = useState("");
-  const [quizset,   setQuizset]   = useState<QuizSet | null>(null);
-  const [loading,   setLoading]   = useState(false);
-  const [error,     setError]     = useState<string | null>(null);
-  const [answers,   setAnswers]   = useState<Record<string, string>>({});
-  const [submitted, setSubmitted] = useState(false);
+  const [topic,       setTopic]       = useState("");
+  const [quizset,     setQuizset]     = useState<QuizSet | null>(null);
+  const [loading,     setLoading]     = useState(false);
+  const [error,       setError]       = useState<string | null>(null);
+  const [answers,     setAnswers]     = useState<Record<string, string>>({});
+  const [qIndex,      setQIndex]      = useState(0);
+  const [showResults, setShowResults] = useState(false);
 
   async function handleQuiz() {
     if (!topic.trim()) return;
     setError(null);
     setQuizset(null);
     setAnswers({});
-    setSubmitted(false);
+    setQIndex(0);
+    setShowResults(false);
     setLoading(true);
     try {
       const res = await generateQuiz(documentId, topic);
@@ -45,36 +49,55 @@ export default function QuizCard({ documentId, index }: QuizCardProps) {
     }
   }
 
-  function select(qid: string, opt: string) {
-    if (submitted) return;
+  function pickAnswer(qid: string, opt: string) {
     setAnswers(prev => ({ ...prev, [qid]: opt }));
   }
 
-  const allAnswered = quizset
-    ? quizset.questions.every(q => answers[q.quiz_id] !== undefined)
-    : false;
+  function goNext() {
+    if (!quizset) return;
+    if (qIndex < quizset.questions.length - 1) {
+      setQIndex(i => i + 1);
+    } else {
+      setShowResults(true);
+    }
+  }
 
-  const score = quizset && submitted
-    ? quizset.questions.filter(q => answers[q.quiz_id] === q.correct_ans).length
-    : null;
+  function retake() {
+    setAnswers({});
+    setQIndex(0);
+    setShowResults(false);
+  }
 
   const total = quizset?.questions.length ?? 0;
+
+  const score = quizset
+    ? quizset.questions.filter(q => answers[q.quiz_id] === q.correct_ans).length
+    : 0;
+
+  // Sidebar score display: show when results are shown
+  const sidebarScore = showResults && quizset !== null;
 
   return (
     <div className="sf-generator">
       {/* ── Sidebar ── */}
       <div>
         <span style={{
-          fontFamily: '"Times New Roman", serif',
+          fontFamily: "var(--font-heading)",
           fontSize: 68,
+          fontWeight: 500,
           color: "var(--sf-ink)",
           lineHeight: 1,
           display: "block",
           marginBottom: 10,
-        }}>0{index}</span>
+          fontVariantNumeric: "tabular-nums",
+        }}>
+          0{index}
+        </span>
 
-        <h3 style={{ fontSize: 18, letterSpacing: "0.04em", marginBottom: 12 }}>Quiz</h3>
-        <p style={{ fontSize: 13.5, color: "var(--color-muted)", lineHeight: 1.56, marginBottom: 24 }}>
+        <h3 style={{ fontSize: 18, fontWeight: 500, letterSpacing: "-.01em", marginBottom: 12 }}>
+          Quiz
+        </h3>
+        <p style={{ fontSize: 13.5, color: "var(--color-neutral-500)", lineHeight: 1.56, marginBottom: 24 }}>
           Multiple-choice questions testing the most important concepts in your document.
         </p>
 
@@ -85,7 +108,7 @@ export default function QuizCard({ documentId, index }: QuizCardProps) {
           value={topic}
           onChange={e => setTopic(e.target.value)}
           onKeyDown={e => e.key === "Enter" && handleQuiz()}
-          style={{ marginBottom: 12 }}
+          style={{ marginBottom: 16 }}
         />
         <button
           className="sf-btn sf-btn-primary"
@@ -96,14 +119,15 @@ export default function QuizCard({ documentId, index }: QuizCardProps) {
           {loading ? "Generating…" : "Generate quiz"}
         </button>
 
-        {/* Score (post-submit) */}
-        {submitted && score !== null && (
-          <div style={{ marginTop: 28, paddingTop: 22, borderTop: "1px solid var(--color-border)" }}>
+        {/* Score (results screen) */}
+        {sidebarScore && (
+          <div style={{ marginTop: 28, paddingTop: 22, borderTop: "1px solid var(--color-neutral-900)" }}>
             <p className="sf-label" style={{ marginBottom: 10 }}>Score</p>
             <p style={{
-              fontFamily: '"Times New Roman", serif',
               fontSize: 56,
+              fontWeight: 500,
               lineHeight: 1,
+              fontVariantNumeric: "tabular-nums",
               color: score === total
                 ? "var(--sf-ok)"
                 : score >= total / 2
@@ -112,9 +136,13 @@ export default function QuizCard({ documentId, index }: QuizCardProps) {
             }}>
               {score}
               <span style={{
-                fontSize: 22, fontFamily: "Arial",
-                color: "var(--color-muted)", marginLeft: 4,
-              }}>/{total}</span>
+                fontSize: 22,
+                fontWeight: 400,
+                color: "var(--color-neutral-600)",
+                marginLeft: 4,
+              }}>
+                /{total}
+              </span>
             </p>
           </div>
         )}
@@ -131,7 +159,7 @@ export default function QuizCard({ documentId, index }: QuizCardProps) {
                 <div className="skeleton" style={{ height: 14, width: `${w}%`, opacity: 0.3 - i * 0.06 }} />
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
                   {[...Array(4)].map((_, j) => (
-                    <div key={j} className="skeleton" style={{ height: 36, borderRadius: 8, opacity: 0.15 }} />
+                    <div key={j} className="skeleton" style={{ height: 36, borderRadius: "var(--radius-md)", opacity: 0.15 }} />
                   ))}
                 </div>
               </div>
@@ -147,7 +175,7 @@ export default function QuizCard({ documentId, index }: QuizCardProps) {
                 <div className="skeleton" style={{ height: 14, width: `${55 + i * 10}%` }} />
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
                   {[...Array(4)].map((_, j) => (
-                    <div key={j} className="skeleton" style={{ height: 36, borderRadius: 8 }} />
+                    <div key={j} className="skeleton" style={{ height: 36, borderRadius: "var(--radius-md)" }} />
                   ))}
                 </div>
               </div>
@@ -161,136 +189,389 @@ export default function QuizCard({ documentId, index }: QuizCardProps) {
         {/* Error */}
         {error && <div className="sf-alert sf-alert-bad">{error}</div>}
 
-        {/* Quiz */}
-        {quizset && (
-          <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
-            {quizset.questions.map((q, qi) => {
-              const userAns  = answers[q.quiz_id];
-              const isCorrect = userAns === q.correct_ans;
+        {/* Quiz — one question at a time */}
+        {quizset && !showResults && (
+          <QuizQuestion
+            q={quizset.questions[qIndex]}
+            qIndex={qIndex}
+            total={total}
+            answers={answers}
+            questions={quizset.questions}
+            onPick={pickAnswer}
+            onNext={goNext}
+          />
+        )}
 
-              return (
-                <div key={q.quiz_id}>
-                  {/* Question */}
-                  <p style={{ fontWeight: 700, lineHeight: 1.48, marginBottom: 14 }}>
-                    <span style={{
-                      fontFamily: '"Times New Roman", serif',
-                      color: "var(--sf-ink)",
-                      marginRight: 8,
-                    }}>
-                      {qi + 1}.
-                    </span>
-                    {q.question}
-                  </p>
+        {/* Results screen */}
+        {quizset && showResults && (
+          <QuizResults
+            questions={quizset.questions}
+            answers={answers}
+            score={score}
+            total={total}
+            onRetake={retake}
+          />
+        )}
+      </div>
+    </div>
+  );
+}
 
-                  {/* Options grid */}
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 10 }}>
-                    {q.options.map((opt, oi) => {
-                      const isSelected = userAns === opt;
-                      const isRight    = opt === q.correct_ans;
+/* ── Single-question panel ───────────────────────── */
+function QuizQuestion({
+  q,
+  qIndex,
+  total,
+  answers,
+  questions,
+  onPick,
+  onNext,
+}: {
+  q: QuizQuestion;
+  qIndex: number;
+  total: number;
+  answers: Record<string, string>;
+  questions: QuizQuestion[];
+  onPick: (qid: string, opt: string) => void;
+  onNext: () => void;
+}) {
+  const userAns   = answers[q.quiz_id];
+  const answered  = userAns !== undefined;
+  const isLast    = qIndex === total - 1;
 
-                      let bg          = "transparent";
-                      let borderColor = "var(--color-border)";
-                      let color       = "var(--color-text)";
-                      let dotBg       = "transparent";
-                      let dotBorder   = "var(--color-border)";
-                      let dotLabel    = "";
+  return (
+    <div>
+      {/* Pip strip */}
+      <div style={{ display: "flex", gap: 4, marginBottom: 40 }}>
+        {questions.map((qq, i) => {
+          const a = answers[qq.quiz_id];
+          let bg = "var(--color-neutral-900)";
+          if (a !== undefined) {
+            bg = a === qq.correct_ans ? "var(--color-accent)" : "var(--color-neutral-600)";
+          } else if (i === qIndex) {
+            bg = "var(--color-neutral-600)";
+          }
+          return (
+            <div
+              key={i}
+              style={{
+                flex: 1,
+                height: 3,
+                borderRadius: 999,
+                background: bg,
+                transition: "background .25s ease",
+              }}
+            />
+          );
+        })}
+      </div>
 
-                      if (submitted) {
-                        if (isRight) {
-                          bg = "color-mix(in srgb, var(--sf-ok) 10%, transparent)";
-                          borderColor = "var(--sf-ok)";
-                          color = "var(--sf-ok)";
-                          dotBg = "var(--sf-ok)";
-                          dotBorder = "var(--sf-ok)";
-                          dotLabel = "✓";
-                        } else if (isSelected) {
-                          bg = "color-mix(in srgb, var(--sf-bad) 10%, transparent)";
-                          borderColor = "var(--sf-bad)";
-                          color = "var(--sf-bad)";
-                          dotBg = "var(--sf-bad)";
-                          dotBorder = "var(--sf-bad)";
-                          dotLabel = "✗";
-                        }
-                      } else if (isSelected) {
-                        bg = "color-mix(in srgb, var(--color-accent) 10%, transparent)";
-                        borderColor = "var(--color-accent)";
-                        dotBg = "var(--color-accent)";
-                        dotBorder = "var(--color-accent)";
-                      }
+      {/* Eyebrow */}
+      <p className="sf-label" style={{ marginBottom: "var(--space-6)" }}>
+        Question {qIndex + 1} of {total}
+      </p>
 
-                      return (
-                        <button
-                          key={oi}
-                          onClick={() => select(q.quiz_id, opt)}
-                          disabled={submitted}
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 10,
-                            padding: "10px 12px",
-                            background: bg,
-                            border: `1.5px solid ${borderColor}`,
-                            borderRadius: 8,
-                            cursor: submitted ? "default" : "pointer",
-                            textAlign: "left",
-                            color,
-                            fontSize: 13.5,
-                            lineHeight: 1.4,
-                            fontFamily: "Arial, Helvetica, sans-serif",
-                            transition: "background 0.12s, border-color 0.12s",
-                          }}
-                        >
-                          <span style={{
-                            width: 15, height: 15, borderRadius: "50%", flexShrink: 0,
-                            border: `1.5px solid ${dotBorder}`,
-                            background: dotBg,
-                            display: "flex", alignItems: "center", justifyContent: "center",
-                            fontSize: 8, color: "#fff", fontWeight: 700,
-                          }}>
-                            {dotLabel}
-                          </span>
-                          {opt}
-                        </button>
-                      );
-                    })}
-                  </div>
+      {/* Question */}
+      <h2 style={{
+        fontSize: 28,
+        fontWeight: 500,
+        lineHeight: 1.3,
+        letterSpacing: "-.025em",
+        marginBottom: 40,
+      }}>
+        {q.question}
+      </h2>
 
-                  {/* Explanation (post-submit) */}
-                  {submitted && (
-                    <div style={{
-                      borderLeft: `3px solid ${isCorrect ? "var(--sf-ok)" : "var(--sf-bad)"}`,
-                      paddingLeft: 14,
-                      marginTop: 6,
-                    }}>
-                      <p style={{ fontSize: 13.5, lineHeight: 1.55, color: "var(--color-muted)" }}>
-                        {q.explanation}
-                      </p>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
+      {/* Options */}
+      <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-4)" }}>
+        {q.options.map((opt, oi) => {
+          const letter     = OPTION_LETTERS[oi] ?? String(oi + 1);
+          const isPicked   = userAns === opt;
+          const isCorrect  = opt === q.correct_ans;
 
-            {/* Submit */}
-            {!submitted && (
-              <div>
-                <button
-                  className="sf-btn sf-btn-primary"
-                  style={{ minWidth: 140 }}
-                  onClick={() => setSubmitted(true)}
-                  disabled={!allAnswered}
-                >
-                  Submit quiz
-                </button>
-                {!allAnswered && (
-                  <p className="sf-label" style={{ marginTop: 10 }}>
-                    Answer all questions to submit
-                  </p>
-                )}
-              </div>
-            )}
+          let borderColor = "var(--color-neutral-800)";
+          let bg          = "transparent";
+          let letterColor = "var(--color-neutral-500)";
+          let mark        = "";
+
+          if (answered) {
+            if (isCorrect) {
+              bg          = "var(--color-accent-900)";
+              borderColor = "var(--color-accent)";
+              letterColor = "var(--color-accent-200)";
+              mark        = "✓";
+            } else if (isPicked) {
+              borderColor = "var(--color-neutral-600)";
+              letterColor = "var(--color-neutral-400)";
+              mark        = "✕";
+            }
+          }
+
+          return (
+            <OptionButton
+              key={oi}
+              opt={opt}
+              letter={letter}
+              mark={mark}
+              bg={bg}
+              borderColor={borderColor}
+              letterColor={letterColor}
+              answered={answered}
+              onClick={() => !answered && onPick(q.quiz_id, opt)}
+            />
+          );
+        })}
+      </div>
+
+      {/* Hint / explanation */}
+      <div style={{ marginTop: "var(--space-8)" }}>
+        {!answered ? (
+          <p style={{ fontSize: 13, color: "var(--color-neutral-700)" }}>
+            Pick an answer to see the passage it came from.
+          </p>
+        ) : (
+          <div>
+            <div style={{
+              fontSize: 14,
+              lineHeight: 1.7,
+              color: "var(--color-neutral-400)",
+              borderLeft: "2px solid var(--color-accent)",
+              paddingLeft: "var(--space-8)",
+            }}>
+              {q.explanation}
+            </div>
+            <button
+              className="sf-btn sf-btn-primary"
+              style={{ fontSize: 14, marginTop: "var(--space-8)" }}
+              onClick={onNext}
+            >
+              {isLast ? "See your result" : "Next question →"}
+            </button>
           </div>
         )}
+      </div>
+    </div>
+  );
+}
+
+/* ── Option button ───────────────────────────────── */
+function OptionButton({
+  opt,
+  letter,
+  mark,
+  bg,
+  borderColor,
+  letterColor,
+  answered,
+  onClick,
+}: {
+  opt: string;
+  letter: string;
+  mark: string;
+  bg: string;
+  borderColor: string;
+  letterColor: string;
+  answered: boolean;
+  onClick: () => void;
+}) {
+  const [hovered, setHovered] = useState(false);
+
+  return (
+    <button
+      onClick={onClick}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      disabled={answered}
+      style={{
+        display: "flex",
+        alignItems: "flex-start",
+        gap: "var(--space-6)",
+        textAlign: "left",
+        border: `1px solid ${hovered && !answered ? "var(--color-neutral-600)" : borderColor}`,
+        borderRadius: "var(--radius-md)",
+        padding: "var(--space-6) var(--space-8)",
+        fontSize: 15,
+        lineHeight: 1.5,
+        cursor: answered ? "default" : "pointer",
+        background: bg,
+        color: "var(--color-text)",
+        fontFamily: "var(--font-body)",
+        transform: hovered && !answered ? "translateX(3px)" : "translateX(0)",
+        transition: "all .18s ease",
+        width: "100%",
+      }}
+    >
+      {/* Letter */}
+      <span style={{
+        fontSize: 11,
+        fontWeight: 600,
+        width: 12,
+        lineHeight: 2,
+        flexShrink: 0,
+        color: letterColor,
+      }}>
+        {letter}
+      </span>
+
+      {/* Text */}
+      <span style={{ flex: 1 }}>{opt}</span>
+
+      {/* Mark */}
+      <span style={{
+        fontSize: 13,
+        lineHeight: 1.6,
+        flexShrink: 0,
+        color: mark === "✓" ? "var(--color-accent-200)" : "var(--color-neutral-500)",
+      }}>
+        {mark}
+      </span>
+    </button>
+  );
+}
+
+/* ── Results screen ──────────────────────────────── */
+function QuizResults({
+  questions,
+  answers,
+  score,
+  total,
+  onRetake,
+}: {
+  questions: QuizQuestion[];
+  answers: Record<string, string>;
+  score: number;
+  total: number;
+  onRetake: () => void;
+}) {
+  return (
+    <div>
+      {/* Eyebrow */}
+      <p style={{
+        fontSize: 11,
+        fontWeight: 400,
+        letterSpacing: ".12em",
+        textTransform: "uppercase",
+        color: "var(--color-accent-300)",
+        marginBottom: "var(--space-6)",
+      }}>
+        Result
+      </p>
+
+      {/* Score display */}
+      <div style={{
+        display: "flex",
+        alignItems: "baseline",
+        gap: 8,
+        marginBottom: 16,
+      }}>
+        <span style={{
+          fontSize: 92,
+          fontWeight: 500,
+          letterSpacing: "-.05em",
+          lineHeight: 1,
+          fontVariantNumeric: "tabular-nums",
+          color: score === total
+            ? "var(--sf-ok)"
+            : score >= total / 2
+              ? "var(--color-accent)"
+              : "var(--sf-bad)",
+        }}>
+          {score}
+        </span>
+        <span style={{
+          fontSize: 34,
+          fontWeight: 400,
+          color: "var(--color-neutral-700)",
+          fontVariantNumeric: "tabular-nums",
+        }}>
+          / {total}
+        </span>
+      </div>
+
+      {/* Note */}
+      <p style={{
+        fontSize: 16,
+        color: "var(--color-neutral-400)",
+        maxWidth: "46ch",
+        lineHeight: 1.6,
+        marginBottom: 48,
+      }}>
+        {score === total
+          ? "Perfect score — you've mastered this material."
+          : score >= total / 2
+            ? "Good work. Review the questions you missed and try again."
+            : "Keep studying — a retake will help reinforce the concepts."}
+      </p>
+
+      {/* Per-question breakdown */}
+      <div style={{ display: "flex", flexDirection: "column" }}>
+        {questions.map((q, i) => {
+          const userAns  = answers[q.quiz_id];
+          const correct  = userAns === q.correct_ans;
+          // Try to extract page from explanation (e.g. "page 105" → "p.105")
+          const pageMatch = q.explanation?.match(/page\s*(\d+)/i);
+          const pageTag   = pageMatch ? `p.${pageMatch[1]}` : null;
+
+          return (
+            <div
+              key={q.quiz_id}
+              style={{
+                display: "grid",
+                gridTemplateColumns: "16px 1fr auto",
+                gap: "var(--space-6)",
+                padding: "var(--space-6) 0",
+                borderTop: "1px solid var(--color-neutral-900)",
+                alignItems: "start",
+              }}
+            >
+              {/* Mark */}
+              <span style={{
+                fontSize: 13,
+                color: correct ? "var(--sf-ok)" : "var(--sf-bad)",
+                lineHeight: 1.5,
+                fontWeight: 500,
+              }}>
+                {correct ? "✓" : "✕"}
+              </span>
+
+              {/* Question */}
+              <span style={{ fontSize: 14, color: "var(--color-neutral-400)", lineHeight: 1.5 }}>
+                {q.question}
+              </span>
+
+              {/* Page tag */}
+              {pageTag && (
+                <span style={{
+                  fontSize: 11,
+                  color: "var(--color-neutral-600)",
+                  letterSpacing: ".06em",
+                  whiteSpace: "nowrap",
+                  fontVariantNumeric: "tabular-nums",
+                }}>
+                  {pageTag}
+                </span>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Buttons */}
+      <div style={{ display: "flex", gap: "var(--space-4)", marginTop: 32, flexWrap: "wrap" }}>
+        <button
+          className="sf-btn sf-btn-primary"
+          style={{ fontSize: 14 }}
+          onClick={onRetake}
+        >
+          Retake the quiz
+        </button>
+        <button
+          className="sf-btn sf-btn-ghost"
+          style={{ fontSize: 14 }}
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+        >
+          Back to top
+        </button>
       </div>
     </div>
   );
