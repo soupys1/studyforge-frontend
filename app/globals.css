@@ -3,53 +3,53 @@
 /* ── Google Fonts ────────────────────────────────── */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap');
 
-/* ── Design tokens — DARK (root defaults) ────────── */
+/* ── Design tokens — LIGHT (root defaults) ────────── */
 :root {
   /* Base */
   --font-heading: 'Inter', Arial, Helvetica, sans-serif;
   --font-body:    'Inter', Arial, Helvetica, sans-serif;
 
-  --color-bg:     #161826;
-  --color-text:   #e9e9ed;
-  --color-accent: #9184d9;
+  --color-bg:     #e4e7f5;
+  --color-text:   #292b31;
+  --color-accent: #5d5294;
 
   /* Neutral ramp */
-  --color-neutral-100: #f3f5fe;
-  --color-neutral-200: #e4e7f5;
-  --color-neutral-300: #cfd3e5;
-  --color-neutral-400: #b2b6ca;
-  --color-neutral-500: #9397ab;
+  --color-neutral-100: #292b31;
+  --color-neutral-200: #292b31;
+  --color-neutral-300: #3f424d;
+  --color-neutral-400: #595d6c;
+  --color-neutral-500: #75798c;
   --color-neutral-600: #75798c;
-  --color-neutral-700: #595d6c;
-  --color-neutral-800: #3f424d;
-  --color-neutral-900: #292b31;
+  --color-neutral-700: #9397ab;
+  --color-neutral-800: #b2b6ca;
+  --color-neutral-900: #cfd3e5;
 
   /* Accent ramp */
-  --color-accent-100: #f5f4ff;
-  --color-accent-200: #e7e5fe;
-  --color-accent-300: #d2cefd;
-  --color-accent-400: #b5abfc;
+  --color-accent-100: #2b2741;
+  --color-accent-200: #423a6a;
+  --color-accent-300: #5d5294;
+  --color-accent-400: #796cbf;
   --color-accent-500: #968ae0;
-  --color-accent-600: #796cbf;
-  --color-accent-700: #5d5294;
-  --color-accent-800: #423a6a;
-  --color-accent-900: #2b2741;
+  --color-accent-600: #9184d9;
+  --color-accent-700: #b5abfc;
+  --color-accent-800: #d2cefd;
+  --color-accent-900: #f5f4ff;
 
   /* Surface tokens */
-  --sf-surface-top:   #1c1f30;
-  --sf-surface-alt:   #1b1e2e;
-  --sf-cell:          #1a1d2c;
-  --sf-ghost1:        #191c2b;
-  --sf-ghost2-line:   #1e2130;
-  --sf-hover:         #1d2132;
-  --sf-hero-grad:     #1e2136;
-  --sf-fade:          #16182600;
-  --sf-glow:          rgba(145, 132, 217, .16);
+  --sf-surface-top:   #f3f5fe;
+  --sf-surface-alt:   #f3f5fe;
+  --sf-cell:          #f3f5fe;
+  --sf-ghost1:        #edeff9;
+  --sf-ghost2-line:   #dfe3f2;
+  --sf-hover:         #eaedf8;
+  --sf-hero-grad:     #f3f5fe;
+  --sf-fade:          #e4e7f500;
+  --sf-glow:          rgba(121, 108, 191, .14);
 
   /* Shadows */
-  --shadow-sm: 0 0 0 1px #292b31;
-  --shadow-md: 0 0 0 1px #3f424d, 0 6px 18px rgba(0,0,0,.4);
-  --shadow-lg: 0 0 0 1px #595d6c, 0 16px 40px rgba(0,0,0,.5);
+  --shadow-sm: 0 0 0 1px #cfd3e5;
+  --shadow-md: 0 0 0 1px #cfd3e5, 0 6px 18px rgba(41,43,49,.10);
+  --shadow-lg: 0 0 0 1px #b2b6ca, 0 16px 40px rgba(41,43,49,.14);
 
   /* Spacing (0.7× density) */
   --space-1: 2.8px;
@@ -67,55 +67,6 @@
   --radius-lg: 14px;
 
   /* Status */
-  --sf-ok:   #34d399;
-  --sf-bad:  #f87171;
-  --sf-warm: #fbbf24;
-
-  /* Backward-compat aliases */
-  --color-panel:    var(--sf-surface-top);
-  --color-border:   var(--color-neutral-800);
-  --color-muted:    var(--color-neutral-600);
-  --color-input-bg: #13111f;
-  --color-tag-bg:   var(--color-accent-900);
-  --sf-ink:         var(--color-neutral-600);
-}
-
-/* ── Light theme overrides ────────────────────────── */
-[data-theme="light"] {
-  --color-bg:   #e4e7f5;
-  --color-text: #292b31;
-
-  --color-neutral-100: #292b31;
-  --color-neutral-200: #292b31;
-  --color-neutral-300: #3f424d;
-  --color-neutral-400: #595d6c;
-  --color-neutral-500: #75798c;
-  --color-neutral-600: #75798c;
-  --color-neutral-700: #9397ab;
-  --color-neutral-800: #b2b6ca;
-  --color-neutral-900: #cfd3e5;
-
-  --color-accent: #5d5294;
-  --color-accent-100: #2b2741;
-  --color-accent-200: #423a6a;
-  --color-accent-300: #5d5294;
-  --color-accent-800: #d2cefd;
-  --color-accent-900: #f5f4ff;
-
-  --sf-surface-top:  #f3f5fe;
-  --sf-surface-alt:  #f3f5fe;
-  --sf-cell:         #f3f5fe;
-  --sf-ghost1:       #edeff9;
-  --sf-ghost2-line:  #dfe3f2;
-  --sf-hover:        #eaedf8;
-  --sf-hero-grad:    #f3f5fe;
-  --sf-fade:         #e4e7f500;
-  --sf-glow:         rgba(121, 108, 191, .14);
-
-  --shadow-sm: 0 0 0 1px #cfd3e5;
-  --shadow-md: 0 0 0 1px #cfd3e5, 0 6px 18px rgba(41,43,49,.10);
-  --shadow-lg: 0 0 0 1px #b2b6ca, 0 16px 40px rgba(41,43,49,.14);
-
   --sf-ok:   #059669;
   --sf-bad:  #dc2626;
   --sf-warm: #d97706;
@@ -125,6 +76,59 @@
   --color-border:   var(--color-neutral-800);
   --color-muted:    var(--color-neutral-600);
   --color-input-bg: #f3f5fe;
+  --color-tag-bg:   var(--color-accent-900);
+  --sf-ink:         var(--color-neutral-600);
+}
+
+/* ── Dark theme overrides ─────────────────────────── */
+[data-theme="dark"] {
+  --color-bg:     #161826;
+  --color-text:   #e9e9ed;
+  --color-accent: #9184d9;
+
+  --color-neutral-100: #f3f5fe;
+  --color-neutral-200: #e4e7f5;
+  --color-neutral-300: #cfd3e5;
+  --color-neutral-400: #b2b6ca;
+  --color-neutral-500: #9397ab;
+  --color-neutral-600: #75798c;
+  --color-neutral-700: #595d6c;
+  --color-neutral-800: #3f424d;
+  --color-neutral-900: #292b31;
+
+  --color-accent-100: #f5f4ff;
+  --color-accent-200: #e7e5fe;
+  --color-accent-300: #d2cefd;
+  --color-accent-400: #b5abfc;
+  --color-accent-500: #968ae0;
+  --color-accent-600: #796cbf;
+  --color-accent-700: #5d5294;
+  --color-accent-800: #423a6a;
+  --color-accent-900: #2b2741;
+
+  --sf-surface-top:   #1c1f30;
+  --sf-surface-alt:   #1b1e2e;
+  --sf-cell:          #1a1d2c;
+  --sf-ghost1:        #191c2b;
+  --sf-ghost2-line:   #1e2130;
+  --sf-hover:         #1d2132;
+  --sf-hero-grad:     #1e2136;
+  --sf-fade:          #16182600;
+  --sf-glow:          rgba(145, 132, 217, .16);
+
+  --shadow-sm: 0 0 0 1px #292b31;
+  --shadow-md: 0 0 0 1px #3f424d, 0 6px 18px rgba(0,0,0,.4);
+  --shadow-lg: 0 0 0 1px #595d6c, 0 16px 40px rgba(0,0,0,.5);
+
+  --sf-ok:   #34d399;
+  --sf-bad:  #f87171;
+  --sf-warm: #fbbf24;
+
+  /* Backward-compat aliases */
+  --color-panel:    var(--sf-surface-top);
+  --color-border:   var(--color-neutral-800);
+  --color-muted:    var(--color-neutral-600);
+  --color-input-bg: #13111f;
   --color-tag-bg:   var(--color-accent-900);
   --sf-ink:         var(--color-neutral-600);
 }

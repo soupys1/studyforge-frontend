@@ -72,7 +72,7 @@ const STEPS = [
 export default function Home() {
   const { user } = useAuth();
   const [docInfo, setDocInfo] = useState<DocInfo | null>(null);
-  const [theme, setTheme] = useState<"light" | "dark">("dark");
+  const [theme, setTheme] = useState<"light" | "dark">("light");
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [heroCard, setHeroCard] = useState(0);
@@ -82,7 +82,7 @@ export default function Home() {
 
   useEffect(() => {
     const stored = localStorage.getItem("studyforge-theme") as "light" | "dark" | null;
-    setTheme(stored ?? "dark");
+    setTheme(stored ?? "light");
   }, []);
 
   useEffect(() => {
@@ -212,7 +212,7 @@ export default function Home() {
               <button
                 className="sf-btn sf-btn-primary"
                 style={{ padding: "7px 14px", fontSize: 13 }}
-                onClick={() => setDocInfo(null)}
+                onClick={() => { setDocInfo(null); setTimeout(scrollToUpload, 60); }}
               >
                 New session
               </button>
