@@ -48,34 +48,36 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
   return (
     <>
-      {/* Backdrop */}
+      {/* Backdrop — acts as the centering container */}
       <div
         style={{
           position: "fixed",
           inset: 0,
           background: "rgba(0,0,0,0.45)",
-          zIndex: 100,
           backdropFilter: "blur(2px)",
+          zIndex: 100,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "16px",
         }}
         onClick={onClose}
-      />
-
-      {/* Modal */}
-      <div style={{
-        position: "fixed",
-        top: "50%",
-        left: "50%",
-        transform: "translate(-50%, -50%)",
-        zIndex: 101,
-        background: "var(--color-panel)",
-        border: "1px solid var(--color-border)",
-        borderRadius: 16,
-        padding: "36px 32px",
-        width: "100%",
-        maxWidth: 400,
-        boxShadow: "0 8px 40px rgba(0,0,0,0.18)",
-        animation: "sf-fade-in 0.18s ease forwards",
-      }}>
+      >
+      {/* Modal — stops click propagation so backdrop click doesn't close when clicking inside */}
+      <div
+        onClick={e => e.stopPropagation()}
+        style={{
+          background: "var(--color-panel)",
+          border: "1px solid var(--color-border)",
+          borderRadius: 16,
+          padding: "36px 32px",
+          width: "100%",
+          maxWidth: 400,
+          boxShadow: "0 8px 40px rgba(0,0,0,0.18)",
+          animation: "sf-fade-in 0.18s ease forwards",
+          position: "relative",
+        }}
+      >
         {/* Close */}
         <button
           onClick={onClose}
@@ -181,6 +183,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
             {mode === "signin" ? "Sign up" : "Sign in"}
           </button>
         </p>
+      </div>
       </div>
     </>
   );
