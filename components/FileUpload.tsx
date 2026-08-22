@@ -164,6 +164,11 @@ export default function FileUpload({ onUploadComplete, onDocumentAdded }: FileUp
           >
             Upload document
           </button>
+          <p style={{ marginTop: 10, fontSize: 12, color: "var(--color-muted)", textAlign: "center" }}>
+            {state === "selected"
+              ? "Standard · about 20 seconds"
+              : "Add a document to continue."}
+          </p>
         </>
       )}
 

@@ -28,7 +28,7 @@ export default function AuthButton({ onOpenModal }: AuthButtonProps) {
         style={{ padding: "7px 14px", maxWidth: 200, overflow: "hidden", textOverflow: "ellipsis" }}
         onClick={() => setMenuOpen(o => !o)}
       >
-        {user.email}
+        {user.user_metadata?.full_name ?? user.email?.split("@")[0]}
       </button>
       {menuOpen && (
         <>

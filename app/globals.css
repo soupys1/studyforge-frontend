@@ -1,11 +1,25 @@
 @import "tailwindcss";
 
 /* ── Google Font ────────────────────────────────── */
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-/* ── Design tokens ──────────────────────────────── */
+/* ── Nocturne design tokens (dark-first) ─────────── */
 :root {
-  /* Study-purple palette (skill: Flashcard & Study Tool) */
+  --color-bg:       #161826;
+  --color-text:     #e2dff0;
+  --color-accent:   #9184d9;
+  --sf-ok:          #34d399;
+  --sf-bad:         #f87171;
+  --sf-warm:        #fbbf24;
+  --sf-ink:         #514e6e;
+  --color-panel:    #1d1b2e;
+  --color-border:   #2d2a45;
+  --color-input-bg: #13111f;
+  --color-muted:    #7e7a9a;
+  --color-tag-bg:   #231f40;
+}
+
+[data-theme="light"] {
   --color-bg:       #faf8ff;
   --color-text:     #1a1525;
   --color-accent:   #7c3aed;
@@ -20,21 +34,6 @@
   --color-tag-bg:   #ede9fe;
 }
 
-[data-theme="dark"] {
-  --color-bg:       #0f0d1a;
-  --color-text:     #ede9fe;
-  --color-accent:   #a78bfa;
-  --sf-ok:          #34d399;
-  --sf-bad:         #f87171;
-  --sf-warm:        #fbbf24;
-  --sf-ink:         #9d8fbe;
-  --color-panel:    #1a1630;
-  --color-border:   #2e2847;
-  --color-input-bg: #16132a;
-  --color-muted:    #9d8fbe;
-  --color-tag-bg:   #231f3d;
-}
-
 /* ── Reset ──────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -42,7 +41,7 @@
 body {
   background: var(--color-bg);
   color: var(--color-text);
-  font-family: 'Plus Jakarta Sans', Arial, Helvetica, sans-serif;
+  font-family: 'Inter', Arial, Helvetica, sans-serif;
   font-size: 15px;
   line-height: 1.58;
   transition: background 0.18s ease, color 0.18s ease;
@@ -50,7 +49,7 @@ body {
 
 h1, h2, h3, h4 {
   font-family: "Times New Roman", Times, serif;
-  font-weight: 400;
+  font-weight: 500;
   text-transform: uppercase;
   line-height: 0.94;
 }
@@ -67,8 +66,13 @@ h1, h2, h3, h4 {
 }
 
 @keyframes sf-fade-in {
-  from { opacity: 0; transform: translateY(12px); }
+  from { opacity: 0; transform: translateY(10px); }
   to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes sf-shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
 }
 
 /* Respect prefers-reduced-motion */
@@ -89,6 +93,21 @@ h1, h2, h3, h4 {
 .skeleton:nth-child(2) { animation-delay: 0.15s; }
 .skeleton:nth-child(3) { animation-delay: 0.30s; }
 .skeleton:nth-child(4) { animation-delay: 0.45s; }
+
+/* ── Shimmer text ───────────────────────────────── */
+.sf-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--color-accent) 20%,
+    color-mix(in srgb, var(--color-accent) 55%, #fff) 40%,
+    var(--color-accent) 60%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: sf-shimmer 3.6s linear infinite;
+}
 
 /* ── Flashcard 3-D flip ─────────────────────────── */
 .card-scene { perspective: 900px; }
@@ -128,9 +147,27 @@ h1, h2, h3, h4 {
   background: var(--color-panel);
   border: 1px solid var(--color-border);
   border-radius: 14px;
+  position: relative;
 }
 
-/* Glassmorphism panel — used for floating UI (header, modals) */
+/* Accent edge-light hairline across the top */
+.sf-panel::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 10%; right: 10%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--color-accent) 45%, transparent) 30%,
+    color-mix(in srgb, var(--color-accent) 45%, transparent) 70%,
+    transparent
+  );
+  border-radius: 999px;
+  pointer-events: none;
+}
+
+/* Glassmorphism panel */
 .sf-panel-glass {
   background: color-mix(in srgb, var(--color-panel) 85%, transparent);
   backdrop-filter: blur(14px);
@@ -139,13 +176,36 @@ h1, h2, h3, h4 {
   border-radius: 14px;
 }
 
+/* ── Fading rule ────────────────────────────────── */
+.sf-rule {
+  border: none;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--color-border) 20%,
+    var(--color-border) 80%,
+    transparent
+  );
+  margin: 0;
+}
+
+/* ── Hover lift ─────────────────────────────────── */
+.sf-lift {
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+.sf-lift:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--color-accent) 14%, rgba(0,0,0,0.3));
+}
+
 .sf-input {
   width: 100%;
   background: var(--color-input-bg);
   border: 1px solid var(--color-border);
   border-radius: 10px;
   padding: 10px 14px;
-  font-family: 'Plus Jakarta Sans', Arial, Helvetica, sans-serif;
+  font-family: 'Inter', Arial, Helvetica, sans-serif;
   font-size: 14px;
   color: var(--color-text);
   outline: none;
@@ -165,7 +225,7 @@ h1, h2, h3, h4 {
   border: none;
   border-radius: 8px;
   padding: 10px 18px;
-  font-family: 'Plus Jakarta Sans', Arial, Helvetica, sans-serif;
+  font-family: 'Inter', Arial, Helvetica, sans-serif;
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.13em;
@@ -188,7 +248,7 @@ h1, h2, h3, h4 {
 }
 
 .sf-kicker {
-  font-family: 'Plus Jakarta Sans', Arial, Helvetica, sans-serif;
+  font-family: 'Inter', Arial, Helvetica, sans-serif;
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.17em;
@@ -197,7 +257,7 @@ h1, h2, h3, h4 {
 }
 
 .sf-label {
-  font-family: 'Plus Jakarta Sans', Arial, Helvetica, sans-serif;
+  font-family: 'Inter', Arial, Helvetica, sans-serif;
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.13em;
@@ -245,7 +305,7 @@ h1, h2, h3, h4 {
 
 /* Generator section reveal */
 .sf-generators {
-  animation: sf-fade-in 0.4s ease forwards;
+  animation: sf-fade-in 0.3s ease forwards;
 }
 
 /* Generator layout */

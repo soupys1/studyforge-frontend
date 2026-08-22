@@ -19,7 +19,7 @@ export default function Home() {
 
   useEffect(() => {
     const stored = localStorage.getItem("studyforge-theme") as "light" | "dark" | null;
-    setTheme(stored ?? "light");
+    setTheme(stored ?? "dark");
   }, []);
 
   // When user signs out, clear active document
@@ -130,7 +130,8 @@ export default function Home() {
                   marginBottom: 28,
                   maxWidth: 520,
                 }}>
-                  Turn any document into a study session.
+                  Turn any document into a{" "}
+                  <span className="sf-shimmer">study session.</span>
                 </h1>
                 <p style={{
                   fontSize: 16,
@@ -142,24 +143,27 @@ export default function Home() {
                   Upload a PDF, DOCX, or TXT file. Enter a topic. Get back structured notes, flashcards, and a quiz, all grounded in your source material.
                 </p>
 
-                {/* Three-step strip */}
-                <div style={{ display: "flex", alignItems: "center", gap: 24 }}>
-                  {(["01 Upload", "02 Generate", "03 Study"] as const).map((step, i) => {
+                {/* Three-step bento grid */}
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 1, background: "var(--color-border)", borderRadius: 12, overflow: "hidden", maxWidth: 400 }}>
+                  {(["01 Upload", "02 Generate", "03 Study"] as const).map((step) => {
                     const [num, label] = step.split(" ");
                     return (
-                      <div key={step} style={{ display: "flex", alignItems: "center", gap: 24 }}>
-                        <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
-                          <span style={{
-                            fontFamily: '"Times New Roman", serif',
-                            fontSize: 30,
-                            color: "var(--sf-ink)",
-                            lineHeight: 1,
-                          }}>{num}</span>
-                          <span className="sf-label">{label}</span>
-                        </div>
-                        {i < 2 && (
-                          <span style={{ color: "var(--color-border)", fontSize: 18, userSelect: "none" }}>/</span>
-                        )}
+                      <div key={step} className="sf-lift" style={{
+                        background: "var(--color-panel)",
+                        padding: "18px 16px",
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: 6,
+                        cursor: "default",
+                      }}>
+                        <span style={{
+                          fontFamily: '"Times New Roman", serif',
+                          fontSize: 26,
+                          color: "var(--color-accent)",
+                          lineHeight: 1,
+                          opacity: 0.55,
+                        }}>{num}</span>
+                        <span className="sf-label">{label}</span>
                       </div>
                     );
                   })}
@@ -181,12 +185,12 @@ export default function Home() {
         {docInfo && (
           <section className="sf-generators" style={{ ...W, padding: "0 32px 100px" }}>
             <div style={{
-              borderTop: "1px solid var(--color-border)",
               paddingTop: 56,
               marginBottom: 60,
               display: "flex",
               alignItems: "baseline",
               justifyContent: "space-between",
+              borderTop: "1px solid var(--color-border)",
             }}>
               <h2 style={{ fontSize: 13, letterSpacing: "0.14em" }}>Study Materials</h2>
               {docInfo.chunks > 0 && (
@@ -196,9 +200,9 @@ export default function Home() {
 
             <div style={{ display: "flex", flexDirection: "column", gap: 56 }}>
               <NoteCard       documentId={docInfo.documentId} index={1} />
-              <div style={{ borderTop: "1px solid var(--color-border)" }} />
+              <hr className="sf-rule" />
               <FlashCardComponent documentId={docInfo.documentId} index={2} />
-              <div style={{ borderTop: "1px solid var(--color-border)" }} />
+              <hr className="sf-rule" />
               <QuizCard       documentId={docInfo.documentId} index={3} />
             </div>
           </section>

@@ -14,7 +14,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script
           suppressHydrationWarning
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem('studyforge-theme');document.documentElement.setAttribute('data-theme',t||'light');}catch(e){}})()`,
+            __html: `(function(){try{var t=localStorage.getItem('studyforge-theme');document.documentElement.setAttribute('data-theme',t||'dark');}catch(e){}})()`,
           }}
         />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
