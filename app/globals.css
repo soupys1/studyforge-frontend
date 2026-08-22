@@ -1,34 +1,38 @@
 @import "tailwindcss";
 
+/* ── Google Font ────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
 /* ── Design tokens ──────────────────────────────── */
 :root {
-  --color-bg:       #f2f2f3;
-  --color-text:     #1d1f20;
-  --color-accent:   #5980a6;
-  --sf-ok:          #3f7d5c;
-  --sf-bad:         #a34b42;
-  --sf-warm:        #b07d2e;
-  --sf-ink:         #5b6478;
+  /* Study-purple palette (skill: Flashcard & Study Tool) */
+  --color-bg:       #faf8ff;
+  --color-text:     #1a1525;
+  --color-accent:   #7c3aed;
+  --sf-ok:          #059669;
+  --sf-bad:         #dc2626;
+  --sf-warm:        #d97706;
+  --sf-ink:         #6b6587;
   --color-panel:    #ffffff;
-  --color-border:   #d4d6d9;
-  --color-input-bg: #f8f8f9;
+  --color-border:   #e4ddf7;
+  --color-input-bg: #f5f2ff;
   --color-muted:    #6b7280;
-  --color-tag-bg:   #eef1f4;
+  --color-tag-bg:   #ede9fe;
 }
 
 [data-theme="dark"] {
-  --color-bg:       #141618;
-  --color-text:     #e9eaec;
-  --color-accent:   #94bce3;
-  --sf-ok:          #6fb28d;
-  --sf-bad:         #e08b80;
-  --sf-warm:        #e0b06a;
-  --sf-ink:         #8f9bb3;
-  --color-panel:    #1e2124;
-  --color-border:   #2c3038;
-  --color-input-bg: #1a1d20;
-  --color-muted:    #8f9bb3;
-  --color-tag-bg:   #252a30;
+  --color-bg:       #0f0d1a;
+  --color-text:     #ede9fe;
+  --color-accent:   #a78bfa;
+  --sf-ok:          #34d399;
+  --sf-bad:         #f87171;
+  --sf-warm:        #fbbf24;
+  --sf-ink:         #9d8fbe;
+  --color-panel:    #1a1630;
+  --color-border:   #2e2847;
+  --color-input-bg: #16132a;
+  --color-muted:    #9d8fbe;
+  --color-tag-bg:   #231f3d;
 }
 
 /* ── Reset ──────────────────────────────────────── */
@@ -38,7 +42,7 @@
 body {
   background: var(--color-bg);
   color: var(--color-text);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Plus Jakarta Sans', Arial, Helvetica, sans-serif;
   font-size: 15px;
   line-height: 1.58;
   transition: background 0.18s ease, color 0.18s ease;
@@ -65,6 +69,15 @@ h1, h2, h3, h4 {
 @keyframes sf-fade-in {
   from { opacity: 0; transform: translateY(12px); }
   to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 /* ── Skeleton ───────────────────────────────────── */
@@ -117,19 +130,31 @@ h1, h2, h3, h4 {
   border-radius: 14px;
 }
 
+/* Glassmorphism panel — used for floating UI (header, modals) */
+.sf-panel-glass {
+  background: color-mix(in srgb, var(--color-panel) 85%, transparent);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid color-mix(in srgb, var(--color-border) 60%, transparent);
+  border-radius: 14px;
+}
+
 .sf-input {
   width: 100%;
   background: var(--color-input-bg);
   border: 1px solid var(--color-border);
   border-radius: 10px;
   padding: 10px 14px;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Plus Jakarta Sans', Arial, Helvetica, sans-serif;
   font-size: 14px;
   color: var(--color-text);
   outline: none;
-  transition: border-color 0.15s;
+  transition: border-color 0.15s, box-shadow 0.15s;
 }
-.sf-input:focus { border-color: var(--color-accent); }
+.sf-input:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 18%, transparent);
+}
 .sf-input::placeholder { color: var(--color-muted); }
 
 .sf-btn {
@@ -140,13 +165,13 @@ h1, h2, h3, h4 {
   border: none;
   border-radius: 8px;
   padding: 10px 18px;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Plus Jakarta Sans', Arial, Helvetica, sans-serif;
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.13em;
   text-transform: uppercase;
   cursor: pointer;
-  transition: opacity 0.15s;
+  transition: opacity 0.15s, box-shadow 0.15s;
   white-space: nowrap;
 }
 .sf-btn-primary { background: var(--color-accent); color: #fff; }
@@ -156,10 +181,14 @@ h1, h2, h3, h4 {
   border: 1px solid var(--color-border);
 }
 .sf-btn:disabled { opacity: 0.35; cursor: not-allowed; }
-.sf-btn:not(:disabled):hover { opacity: 0.78; }
+.sf-btn:not(:disabled):hover { opacity: 0.82; }
+.sf-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 35%, transparent);
+}
 
 .sf-kicker {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Plus Jakarta Sans', Arial, Helvetica, sans-serif;
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.17em;
@@ -168,7 +197,7 @@ h1, h2, h3, h4 {
 }
 
 .sf-label {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Plus Jakarta Sans', Arial, Helvetica, sans-serif;
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.13em;
@@ -179,7 +208,7 @@ h1, h2, h3, h4 {
 .sf-tag {
   display: inline-block;
   background: var(--color-tag-bg);
-  color: var(--color-muted);
+  color: var(--color-accent);
   border-radius: 999px;
   padding: 3px 10px;
   font-size: 11px;

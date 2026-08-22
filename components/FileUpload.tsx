@@ -10,12 +10,13 @@ export interface DocInfo {
 
 interface FileUploadProps {
   onUploadComplete: (info: DocInfo) => void;
+  onDocumentAdded?: () => void;
 }
 
 const ALLOWED = [".pdf", ".docx", ".txt"];
 type UploadState = "idle" | "selected" | "uploading" | "done" | "error";
 
-export default function FileUpload({ onUploadComplete }: FileUploadProps) {
+export default function FileUpload({ onUploadComplete, onDocumentAdded }: FileUploadProps) {
   const [state, setState]           = useState<UploadState>("idle");
   const [file, setFile]             = useState<File | null>(null);
   const [error, setError]           = useState<string | null>(null);
@@ -54,6 +55,7 @@ export default function FileUpload({ onUploadComplete }: FileUploadProps) {
       setResult(info);
       setState("done");
       onUploadComplete(info);
+      onDocumentAdded?.();
     } catch (err) {
       clearTimeout(slowTimer);
       setError(err instanceof Error ? err.message : "Upload failed");
@@ -122,7 +124,13 @@ export default function FileUpload({ onUploadComplete }: FileUploadProps) {
             />
             {state === "selected" && file ? (
               <>
-                <div style={{ fontSize: 28, marginBottom: 10 }}>📄</div>
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ margin: "0 auto 10px", display: "block" }} aria-hidden>
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                  <polyline points="14 2 14 8 20 8"/>
+                  <line x1="16" y1="13" x2="8" y2="13"/>
+                  <line x1="16" y1="17" x2="8" y2="17"/>
+                  <polyline points="10 9 9 9 8 9"/>
+                </svg>
                 <p style={{ fontWeight: 700, marginBottom: 4, wordBreak: "break-all" }}>{file.name}</p>
                 <p style={{ fontSize: 12.5, color: "var(--color-muted)" }}>
                   {(file.size / 1024).toFixed(0)} KB · Click to change
@@ -135,8 +143,13 @@ export default function FileUpload({ onUploadComplete }: FileUploadProps) {
                   background: "var(--color-tag-bg)",
                   display: "flex", alignItems: "center", justifyContent: "center",
                   margin: "0 auto 14px",
-                  fontSize: 20,
-                }}>↑</div>
+                }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="17 8 12 3 7 8"/>
+                    <line x1="12" y1="3" x2="12" y2="15"/>
+                  </svg>
+                </div>
                 <p style={{ fontWeight: 700, marginBottom: 4 }}>Click to select a file</p>
                 <p style={{ fontSize: 12.5, color: "var(--color-muted)" }}>PDF, DOCX, or TXT</p>
               </>

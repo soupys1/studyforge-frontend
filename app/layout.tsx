@@ -17,6 +17,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             __html: `(function(){try{var t=localStorage.getItem('studyforge-theme');document.documentElement.setAttribute('data-theme',t||'light');}catch(e){}})()`,
           }}
         />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
       <body>{children}</body>
     </html>
