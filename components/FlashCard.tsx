@@ -147,6 +147,9 @@ export default function FlashCardComponent({ documentId, index }: FlashCardProps
         {!cardset && !loading && !error && (
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             <div className="skeleton" style={{ height: 160, borderRadius: "var(--radius-lg)", opacity: 0.3 }} />
+            <div style={{ marginTop: 8 }}>
+              <p className="sf-label">Enter a topic on the left and click <strong style={{ fontWeight: 500, color: "var(--color-neutral-400)" }}>Generate flashcards</strong> to begin drilling.</p>
+            </div>
           </div>
         )}
 

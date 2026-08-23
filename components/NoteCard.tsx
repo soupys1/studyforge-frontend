@@ -276,6 +276,9 @@ export default function NoteCard({ documentId, index }: NoteCardProps) {
             <div className="skeleton" style={{ height: 13, width: "100%", opacity: 0.2 }} />
             <div className="skeleton" style={{ height: 13, width: "90%",  opacity: 0.16 }} />
             <div className="skeleton" style={{ height: 13, width: "80%",  opacity: 0.13 }} />
+            <div style={{ marginTop: 16 }}>
+              <p className="sf-label">Enter a topic on the left and click <strong style={{ fontWeight: 500, color: "var(--color-neutral-400)" }}>Generate notes</strong> to get started.</p>
+            </div>
           </div>
         )}
 

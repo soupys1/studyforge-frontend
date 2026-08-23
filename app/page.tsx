@@ -77,6 +77,7 @@ export default function Home() {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [heroCard, setHeroCard] = useState(0);
   const [heroFlipped, setHeroFlipped] = useState(false);
+  const [activeTab, setActiveTab] = useState<"notes" | "flashcards" | "quiz">("notes");
 
   const uploadRef = useRef<HTMLDivElement>(null);
 
@@ -171,20 +172,6 @@ export default function Home() {
               }}>
                 StudyForge
               </span>
-              {/* RAG pill chip */}
-              <span style={{
-                fontSize: 10,
-                fontWeight: 400,
-                letterSpacing: ".14em",
-                textTransform: "uppercase",
-                color: "var(--color-neutral-600)",
-                border: "1px solid var(--color-neutral-800)",
-                borderRadius: 999,
-                padding: "3px 8px",
-                lineHeight: 1,
-              }}>
-                RAG
-              </span>
             </div>
 
             {/* Right controls */}
@@ -248,36 +235,6 @@ export default function Home() {
               }}>
                 {/* Left col */}
                 <div>
-                  {/* Live badge */}
-                  <div style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: 8,
-                    padding: "6px 12px",
-                    borderRadius: 999,
-                    background: "var(--color-accent-900)",
-                    border: "1px solid var(--color-accent-800)",
-                    color: "var(--color-accent-200)",
-                    fontSize: 11,
-                    fontWeight: 400,
-                    letterSpacing: ".10em",
-                    textTransform: "uppercase",
-                    marginBottom: 36,
-                  }}>
-                    <span
-                      className="sf-blink"
-                      style={{
-                        width: 5,
-                        height: 5,
-                        borderRadius: "50%",
-                        background: "var(--color-accent)",
-                        display: "inline-block",
-                        flexShrink: 0,
-                      }}
-                    />
-                    Grounded in your source
-                  </div>
-
                   {/* h1 */}
                   <h1 style={{
                     fontSize: 72,
@@ -405,33 +362,55 @@ export default function Home() {
         {/* ── Generators (with doc) ───────────────── */}
         {docInfo && (
           <section className="sf-generators" style={{ ...W, padding: "0 40px 100px" }}>
+
+            {/* Tab bar */}
             <div style={{
-              paddingTop: 56,
-              marginBottom: 60,
               display: "flex",
-              alignItems: "baseline",
+              alignItems: "center",
               justifyContent: "space-between",
-              borderTop: "1px solid var(--color-neutral-900)",
+              borderBottom: "1px solid var(--color-neutral-900)",
+              marginBottom: 48,
+              paddingTop: 40,
             }}>
-              <h2 style={{
-                fontSize: 13,
-                fontWeight: 500,
-                letterSpacing: ".14em",
-                textTransform: "uppercase",
-              }}>
-                Study Materials
-              </h2>
+              <div style={{ display: "flex", gap: 0 }}>
+                {(["notes", "flashcards", "quiz"] as const).map(tab => (
+                  <button
+                    key={tab}
+                    onClick={() => setActiveTab(tab)}
+                    style={{
+                      background: "none",
+                      border: "none",
+                      borderBottom: activeTab === tab
+                        ? "2px solid var(--color-accent)"
+                        : "2px solid transparent",
+                      padding: "10px 20px",
+                      marginBottom: -1,
+                      fontSize: 13,
+                      fontWeight: activeTab === tab ? 500 : 400,
+                      letterSpacing: ".06em",
+                      textTransform: "capitalize",
+                      color: activeTab === tab
+                        ? "var(--color-text)"
+                        : "var(--color-neutral-500)",
+                      cursor: "pointer",
+                      transition: "color .18s, border-color .18s",
+                      fontFamily: "var(--font-body)",
+                    }}
+                  >
+                    {tab}
+                  </button>
+                ))}
+              </div>
               {docInfo.chunks > 0 && (
-                <span className="sf-label">{docInfo.chunks} source chunks indexed</span>
+                <span className="sf-label">{docInfo.chunks} chunks indexed</span>
               )}
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: 56 }}>
-              <NoteCard documentId={docInfo.documentId} index={1} />
-              <hr className="sf-rule" />
-              <FlashCardComponent documentId={docInfo.documentId} index={2} />
-              <hr className="sf-rule" />
-              <QuizCard documentId={docInfo.documentId} index={3} />
+            {/* Active tab content */}
+            <div key={activeTab} style={{ animation: "sf-in .2s ease both" }}>
+              {activeTab === "notes"      && <NoteCard documentId={docInfo.documentId} index={1} />}
+              {activeTab === "flashcards" && <FlashCardComponent documentId={docInfo.documentId} index={2} />}
+              {activeTab === "quiz"       && <QuizCard documentId={docInfo.documentId} index={3} />}
             </div>
           </section>
         )}

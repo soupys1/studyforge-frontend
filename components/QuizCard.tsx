@@ -164,6 +164,9 @@ export default function QuizCard({ documentId, index }: QuizCardProps) {
                 </div>
               </div>
             ))}
+            <div style={{ marginTop: 4 }}>
+              <p className="sf-label">Enter a topic on the left and click <strong style={{ fontWeight: 500, color: "var(--color-neutral-400)" }}>Generate quiz</strong> to test your knowledge.</p>
+            </div>
           </div>
         )}
 
