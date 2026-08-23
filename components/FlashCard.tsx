@@ -64,34 +64,31 @@ export default function FlashCardComponent({ documentId, index }: FlashCardProps
     advance();
   }
 
-  function handleSkip() {
-    advance();
-  }
-
   const card  = cardset?.cards[current];
   const total = cardset?.cards.length ?? 0;
 
   return (
     <div className="sf-generator">
-      {/* ── Sidebar ── */}
+      {/* Sidebar */}
       <div>
         <span style={{
           fontFamily: "var(--font-heading)",
-          fontSize: 68,
-          fontWeight: 500,
-          color: "var(--sf-ink)",
+          fontSize: 56,
+          fontWeight: 600,
+          color: "var(--ln-hair-tertiary)",
           lineHeight: 1,
           display: "block",
-          marginBottom: 10,
+          marginBottom: 12,
           fontVariantNumeric: "tabular-nums",
+          letterSpacing: "-0.04em",
         }}>
           0{index}
         </span>
 
-        <h3 style={{ fontSize: 18, fontWeight: 500, letterSpacing: "-.01em", marginBottom: 12 }}>
+        <h3 style={{ fontSize: 16, fontWeight: 600, letterSpacing: "-0.01em", marginBottom: 8, color: "var(--ln-ink)" }}>
           Flashcards
         </h3>
-        <p style={{ fontSize: 13.5, color: "var(--color-neutral-500)", lineHeight: 1.56, marginBottom: 24 }}>
+        <p style={{ fontSize: 13.5, color: "var(--ln-ink-subtle)", lineHeight: 1.56, marginBottom: 24 }}>
           Q&A pairs for active recall. Click any card to reveal the answer.
         </p>
 
@@ -102,7 +99,7 @@ export default function FlashCardComponent({ documentId, index }: FlashCardProps
           value={topic}
           onChange={e => setTopic(e.target.value)}
           onKeyDown={e => e.key === "Enter" && handleFlashcards()}
-          style={{ marginBottom: 16 }}
+          style={{ marginBottom: 10 }}
         />
         <button
           className="sf-btn sf-btn-primary"
@@ -113,25 +110,25 @@ export default function FlashCardComponent({ documentId, index }: FlashCardProps
           {loading ? "Generating…" : "Generate flashcards"}
         </button>
 
-        {/* Progress counter */}
+        {/* Progress */}
         {cardset && (
-          <div style={{ marginTop: 28, paddingTop: 22, borderTop: "1px solid var(--color-neutral-900)" }}>
-            <p className="sf-label" style={{ marginBottom: 10 }}>Progress</p>
+          <div style={{ marginTop: 28, paddingTop: 22, borderTop: "1px solid var(--ln-hair)" }}>
+            <p className="sf-label" style={{ marginBottom: 8 }}>Progress</p>
             <p style={{
               fontFamily: "var(--font-heading)",
-              fontSize: 40,
-              fontWeight: 500,
+              fontSize: 36,
+              fontWeight: 600,
               lineHeight: 1,
               fontVariantNumeric: "tabular-nums",
+              letterSpacing: "-0.04em",
+              color: "var(--ln-ink)",
             }}>
               {known.size}
               <span style={{
                 fontSize: 13,
                 fontWeight: 400,
-                letterSpacing: ".08em",
-                color: "var(--color-neutral-600)",
+                color: "var(--ln-ink-tertiary)",
                 marginLeft: 6,
-                textTransform: "uppercase",
               }}>
                 / {total} known
               </span>
@@ -140,15 +137,15 @@ export default function FlashCardComponent({ documentId, index }: FlashCardProps
         )}
       </div>
 
-      {/* ── Output ── */}
+      {/* Output */}
       <div className="sf-panel" style={{ padding: 32, minHeight: 180 }}>
 
         {/* Ghost */}
         {!cardset && !loading && !error && (
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-            <div className="skeleton" style={{ height: 160, borderRadius: "var(--radius-lg)", opacity: 0.3 }} />
+            <div className="skeleton" style={{ height: 160, borderRadius: "var(--radius-lg)", opacity: 0.5 }} />
             <div style={{ marginTop: 8 }}>
-              <p className="sf-label">Enter a topic on the left and click <strong style={{ fontWeight: 500, color: "var(--color-neutral-400)" }}>Generate flashcards</strong> to begin drilling.</p>
+              <p className="sf-label">Enter a topic on the left and click <strong style={{ fontWeight: 500, color: "var(--ln-ink-subtle)" }}>Generate flashcards</strong> to begin drilling.</p>
             </div>
           </div>
         )}
@@ -165,88 +162,61 @@ export default function FlashCardComponent({ documentId, index }: FlashCardProps
           </div>
         )}
 
-        {/* Error */}
         {error && <div className="sf-alert sf-alert-bad">{error}</div>}
 
         {/* Card */}
         {cardset && card && (
           <div>
             {/* Pip strip */}
-            <div style={{ display: "flex", gap: 3, marginBottom: "var(--space-8)" }}>
+            <div style={{ display: "flex", gap: 3, marginBottom: 32 }}>
               {cardset.cards.map((_, i) => (
                 <div
                   key={i}
                   style={{
                     flex: 1,
-                    height: 3,
+                    height: 2,
                     borderRadius: 999,
                     background: known.has(i)
-                      ? "var(--color-accent)"
+                      ? "var(--ln-accent)"
                       : i === current
-                        ? "var(--color-neutral-500)"
-                        : "var(--color-neutral-900)",
-                    transition: "background .25s ease",
+                        ? "var(--ln-ink-subtle)"
+                        : "var(--ln-hair)",
+                    transition: "background .2s ease",
                   }}
                 />
               ))}
             </div>
 
-            {/* Card face (tilt approach, no 3D flip) */}
-            <FlashCardFace
-              card={card}
-              flipped={flipped}
-              onFlip={() => setFlipped(f => !f)}
-            />
+            <FlashCardFace card={card} flipped={flipped} onFlip={() => setFlipped(f => !f)} />
 
-            {/* Action row */}
+            {/* Actions */}
             <div style={{
               display: "flex",
               alignItems: "center",
-              gap: "var(--space-4)",
-              marginTop: "var(--space-8)",
+              gap: 8,
+              marginTop: 24,
             }}>
               {!flipped ? (
                 <>
-                  <button
-                    className="sf-btn sf-btn-primary"
-                    style={{ fontSize: 14 }}
-                    onClick={() => setFlipped(true)}
-                  >
+                  <button className="sf-btn sf-btn-primary" style={{ fontSize: 14 }} onClick={() => setFlipped(true)}>
                     Reveal answer
                   </button>
-                  <button
-                    className="sf-btn sf-btn-ghost"
-                    style={{ fontSize: 14 }}
-                    onClick={handleSkip}
-                  >
+                  <button className="sf-btn sf-btn-ghost" style={{ fontSize: 14 }} onClick={advance}>
                     Skip
                   </button>
                 </>
               ) : (
                 <>
-                  <button
-                    className="sf-btn sf-btn-primary"
-                    style={{ fontSize: 14 }}
-                    onClick={handleKnewIt}
-                  >
+                  <button className="sf-btn sf-btn-primary" style={{ fontSize: 14 }} onClick={handleKnewIt}>
                     Knew it
                   </button>
-                  <button
-                    className="sf-btn sf-btn-secondary"
-                    style={{ fontSize: 14 }}
-                    onClick={handleReviewAgain}
-                  >
+                  <button className="sf-btn sf-btn-secondary" style={{ fontSize: 14 }} onClick={handleReviewAgain}>
                     Review again
                   </button>
                 </>
               )}
-              {/* Spacer + counter */}
               <div style={{ flex: 1 }} />
-              <span style={{
-                fontSize: 12,
-                color: "var(--color-neutral-700)",
-                fontVariantNumeric: "tabular-nums",
-              }}>
+              <span style={{ fontSize: 12, color: "var(--ln-ink-tertiary)", fontVariantNumeric: "tabular-nums" }}>
                 {known.size} of {total} marked known
               </span>
             </div>
@@ -257,11 +227,8 @@ export default function FlashCardComponent({ documentId, index }: FlashCardProps
   );
 }
 
-/* ── Card face sub-component ─────────────────────── */
 function FlashCardFace({
-  card,
-  flipped,
-  onFlip,
+  card, flipped, onFlip,
 }: {
   card: { front_face: string; back_face: string };
   flipped: boolean;
@@ -276,61 +243,42 @@ function FlashCardFace({
       onMouseLeave={() => setHovered(false)}
       style={{
         position: "relative",
-        overflow: "hidden",
-        border: `1px solid ${hovered && !flipped ? "var(--color-neutral-700)" : "var(--color-neutral-800)"}`,
+        border: `1px solid ${flipped ? "var(--ln-accent)" : hovered ? "var(--ln-hair-strong)" : "var(--ln-hair)"}`,
         borderRadius: "var(--radius-lg)",
-        background: "linear-gradient(180deg, var(--sf-surface-top), var(--sf-fade))",
-        boxShadow: "var(--shadow-md)",
-        padding: "48px 40px",
-        minHeight: 240,
+        background: flipped ? "color-mix(in srgb, var(--ln-accent) 8%, var(--ln-s2))" : "var(--ln-s2)",
+        padding: "40px 36px",
+        minHeight: 220,
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
         cursor: "pointer",
-        transform: flipped ? "rotateX(0)" : "rotateX(2deg)",
-        transition: "transform .4s cubic-bezier(.2,.7,.2,1), border-color .3s ease",
+        transition: "border-color .2s ease, background .2s ease",
         userSelect: "none",
       }}
     >
-      {/* Accent edge-light at 15% insets */}
       <div style={{
-        position: "absolute",
-        top: 0,
-        left: "15%",
-        right: "15%",
-        height: 1,
-        background: "linear-gradient(90deg, transparent, var(--color-accent), transparent)",
-        pointerEvents: "none",
-      }} />
-
-      {/* Side label */}
-      <div style={{
-        fontSize: 11,
-        fontWeight: 400,
-        letterSpacing: ".12em",
+        fontSize: 12,
+        fontWeight: 500,
+        letterSpacing: "0.4px",
         textTransform: "uppercase",
-        color: "var(--color-accent-300)",
-        marginBottom: "var(--space-8)",
+        color: flipped ? "var(--ln-accent-hover)" : "var(--ln-ink-subtle)",
+        marginBottom: 20,
+        transition: "color .2s ease",
       }}>
         {flipped ? "Answer" : "Prompt"}
       </div>
 
-      {/* Face text */}
       <div style={{
-        fontSize: 24,
+        fontSize: 22,
         fontWeight: 500,
-        lineHeight: 1.4,
-        letterSpacing: "-.02em",
+        lineHeight: 1.45,
+        letterSpacing: "-0.02em",
+        color: "var(--ln-ink)",
       }}>
         {flipped ? card.back_face : card.front_face}
       </div>
 
-      {/* Hint */}
-      <div style={{
-        fontSize: 12,
-        color: "var(--color-neutral-600)",
-        marginTop: "var(--space-8)",
-      }}>
+      <div style={{ fontSize: 12, color: "var(--ln-ink-tertiary)", marginTop: 20 }}>
         {flipped ? "Answer revealed" : "Click to reveal"}
       </div>
     </div>

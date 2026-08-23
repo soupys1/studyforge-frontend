@@ -10,7 +10,6 @@ import DocumentSidebar from "@/components/DocumentSidebar";
 import { useAuth } from "@/hooks/useAuth";
 import type { DocInfo } from "@/components/FileUpload";
 
-/* ── Sample flashcard data ────────────────────────── */
 const SAMPLE_CARDS = [
   {
     q: "What is the terminal electron acceptor of the electron transport chain?",
@@ -29,7 +28,7 @@ const SAMPLE_CARDS = [
   },
   {
     q: "How many ATP does oxidative phosphorylation contribute per glucose?",
-    a: "Roughly 26 to 28 — the great majority of the approximately 30 to 32 total.",
+    a: "Roughly 26 to 28, the great majority of the approximately 30 to 32 total.",
     page: 101,
   },
   {
@@ -46,11 +45,10 @@ const SAMPLE_CARDS = [
 
 const DEMO_DOC: DocInfo = {
   documentId: "demo",
-  filename: "Sample — Cell Respiration.pdf",
+  filename: "Sample: Cell Respiration.pdf",
   chunks: 0,
 };
 
-/* ── Step bento cells ────────────────────────────── */
 const STEPS = [
   {
     num: "01",
@@ -72,23 +70,19 @@ const STEPS = [
 export default function Home() {
   const { user } = useAuth();
   const [docInfo, setDocInfo] = useState<DocInfo | null>(null);
-  const [theme, setTheme] = useState<"light" | "dark">("light");
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [heroCard, setHeroCard] = useState(0);
   const [heroFlipped, setHeroFlipped] = useState(false);
   const [activeTab, setActiveTab] = useState<"notes" | "flashcards" | "quiz">("notes");
+  const [theme, setTheme] = useState<"light" | "dark">("light");
 
   const uploadRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const stored = localStorage.getItem("studyforge-theme") as "light" | "dark" | null;
-    setTheme(stored ?? "light");
+    if (stored) setTheme(stored);
   }, []);
-
-  useEffect(() => {
-    if (!user) setDocInfo(null);
-  }, [user]);
 
   function toggleTheme() {
     const next = theme === "light" ? "dark" : "light";
@@ -120,16 +114,15 @@ export default function Home() {
 
   const sample = SAMPLE_CARDS[heroCard];
 
-  /* ── Shared width constraint ─────────────────── */
   const W = {
-    maxWidth: 1240,
+    maxWidth: 1280,
     margin: "0 auto",
     padding: "0 40px",
   } as const;
 
   return (
     <div style={{ display: "flex", minHeight: "100vh" }}>
-      {/* ── Sidebar (signed-in only) ───────────────── */}
+      {/* Sidebar */}
       <DocumentSidebar
         onSelectDocument={handleSelectDocument}
         onNewUpload={handleNewUpload}
@@ -137,68 +130,66 @@ export default function Home() {
         refreshTrigger={refreshTrigger}
       />
 
-      {/* ── Main ──────────────────────────────────── */}
+      {/* Main */}
       <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", minHeight: "100vh" }}>
 
-        {/* ── Header ──────────────────────────────── */}
+        {/* Header */}
         <header
           className="sf-panel-glass"
-          style={{
-            borderRadius: 0,
-            position: "sticky",
-            top: 0,
-            zIndex: 50,
-          }}
+          style={{ position: "sticky", top: 0, zIndex: 50 }}
         >
           <div style={{
             ...W,
-            height: 58,
+            height: 56,
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
             gap: 16,
           }}>
-            {/* Logo + wordmark + RAG pill */}
+            {/* Logo */}
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <svg width="26" height="26" viewBox="0 0 26 26" fill="none" aria-hidden>
-                <rect width="26" height="26" rx="6" fill="var(--color-accent)" />
-                <text x="13" y="19" textAnchor="middle" fontFamily="Inter" fontSize="13" fontWeight="500" fill="white">SF</text>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
+                <rect width="24" height="24" rx="6" fill="var(--ln-accent)" />
+                <text x="12" y="17" textAnchor="middle" fontFamily="Inter" fontSize="12" fontWeight="600" fill="white">SF</text>
               </svg>
               <span style={{
                 fontFamily: "var(--font-heading)",
-                fontSize: 16,
-                fontWeight: 500,
-                letterSpacing: ".02em",
+                fontSize: 15,
+                fontWeight: 600,
+                letterSpacing: "-0.02em",
+                color: "var(--ln-ink)",
               }}>
                 StudyForge
               </span>
             </div>
 
             {/* Right controls */}
-            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
               {docInfo && (
                 <span style={{
                   display: "inline-flex",
                   alignItems: "center",
                   gap: 6,
-                  padding: "4px 12px",
-                  borderRadius: 999,
-                  fontSize: 11,
+                  padding: "3px 10px",
+                  borderRadius: "var(--radius-sm)",
+                  fontSize: 12,
                   fontWeight: 400,
-                  letterSpacing: ".10em",
-                  textTransform: "uppercase",
-                  background: "var(--color-accent-900)",
-                  color: "var(--color-accent-300)",
-                  border: "1px solid var(--color-accent-800)",
+                  background: "var(--ln-s1)",
+                  color: "var(--ln-ink-subtle)",
+                  border: "1px solid var(--ln-hair)",
+                  maxWidth: 240,
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
                 }}>
-                  <span style={{ width: 5, height: 5, borderRadius: "50%", background: "var(--color-accent)", display: "inline-block" }} />
+                  <span style={{ width: 5, height: 5, borderRadius: "50%", background: "var(--ln-accent)", display: "inline-block", flexShrink: 0 }} />
                   {docInfo.filename}
                 </span>
               )}
 
               <button
-                className="sf-btn sf-btn-primary"
-                style={{ padding: "7px 14px", fontSize: 13 }}
+                className="sf-btn sf-btn-ghost"
+                style={{ fontSize: 13 }}
                 onClick={() => { setDocInfo(null); setTimeout(scrollToUpload, 60); }}
               >
                 New session
@@ -209,7 +200,7 @@ export default function Home() {
               <button
                 onClick={toggleTheme}
                 className="sf-btn sf-btn-ghost"
-                style={{ padding: "7px 14px" }}
+                style={{ fontSize: 13 }}
                 aria-label="Toggle theme"
               >
                 {theme === "light" ? "Dark" : "Light"}
@@ -218,106 +209,101 @@ export default function Home() {
           </div>
         </header>
 
-        {/* ── Landing (no doc) ────────────────────── */}
+        {/* Landing */}
         {!docInfo && (
           <main style={{ flex: 1 }}>
-            {/* Hero section */}
-            <div style={{
-              backgroundImage: "radial-gradient(120% 80% at 78% -10%, var(--sf-hero-grad) 0%, transparent 62%)",
-            }}>
+            {/* Hero */}
+            <div style={{ ...W, padding: "80px 40px 0" }}>
               <div style={{
-                ...W,
                 display: "grid",
-                gridTemplateColumns: "minmax(0, 1.05fr) minmax(0, .95fr)",
-                gap: 72,
+                gridTemplateColumns: "minmax(0, 1.1fr) minmax(0, .9fr)",
+                gap: 80,
                 alignItems: "center",
-                padding: "72px 40px 0",
               }}>
-                {/* Left col */}
+                {/* Left */}
                 <div>
-                  {/* h1 */}
+                  <p style={{
+                    fontSize: 13,
+                    fontWeight: 500,
+                    letterSpacing: "0.4px",
+                    textTransform: "uppercase",
+                    color: "var(--ln-ink-subtle)",
+                    marginBottom: 32,
+                  }}>
+                    Document-grounded study
+                  </p>
+
                   <h1 style={{
                     fontSize: 72,
-                    fontWeight: 500,
-                    lineHeight: .98,
-                    letterSpacing: "-.04em",
+                    fontWeight: 600,
+                    lineHeight: 1.02,
+                    letterSpacing: "-3px",
                     maxWidth: "14ch",
-                    marginBottom: 28,
+                    marginBottom: 24,
+                    color: "var(--ln-ink)",
                   }}>
                     Turn any document into a{" "}
                     <span className="sf-shimmer">study session.</span>
                   </h1>
 
-                  {/* Lead paragraph */}
                   <p style={{
                     fontSize: 18,
-                    lineHeight: 1.65,
-                    color: "var(--color-neutral-400)",
-                    maxWidth: "48ch",
-                    marginBottom: 36,
+                    lineHeight: 1.6,
+                    color: "var(--ln-ink-subtle)",
+                    maxWidth: "44ch",
+                    marginBottom: 40,
+                    fontWeight: 400,
+                    letterSpacing: "-0.01em",
                   }}>
-                    Upload a PDF, DOCX, or TXT file. Enter a topic. Get back structured notes, flashcards, and a quiz, all grounded in your source material.
+                    Upload a PDF, DOCX, or TXT. Enter a topic. Get structured notes, flashcards, and a quiz grounded in your source.
                   </p>
 
-                  {/* CTA buttons */}
-                  <div style={{ display: "flex", gap: "var(--space-4)", flexWrap: "wrap", marginTop: 36 }}>
+                  <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                     <button
                       className="sf-btn sf-btn-primary"
-                      style={{ fontSize: 15, padding: "13px 24px" }}
+                      style={{ fontSize: 14, padding: "10px 20px" }}
                       onClick={scrollToUpload}
                     >
                       Upload a document
                     </button>
                     <button
-                      className="sf-btn sf-btn-ghost"
-                      style={{ fontSize: 15, padding: "13px 20px" }}
+                      className="sf-btn sf-btn-secondary"
+                      style={{ fontSize: 14, padding: "10px 20px" }}
                       onClick={openSampleSession}
                     >
-                      Open a sample session →
+                      Open sample session
                     </button>
                   </div>
                 </div>
 
-                {/* Right col — interactive sample card stack */}
-                <div style={{ position: "relative", paddingBottom: 26, paddingRight: 20 }}>
-                  {/* Ambient glow */}
+                {/* Right — sample card */}
+                <div style={{ position: "relative", paddingBottom: 24, paddingRight: 18 }}>
+                  {/* Ghost layer 2 */}
                   <div style={{
                     position: "absolute",
-                    inset: "-80px -40px 20px",
-                    borderRadius: "50%",
-                    background: "radial-gradient(closest-side, var(--sf-glow), transparent)",
-                    pointerEvents: "none",
-                    zIndex: 0,
-                  }} />
-
-                  {/* Ghost layer 2 (bottom) */}
-                  <div style={{
-                    position: "absolute",
-                    left: 38,
-                    right: -20,
-                    top: 30,
-                    bottom: -26,
+                    left: 36,
+                    right: -18,
+                    top: 28,
+                    bottom: -24,
                     borderRadius: "var(--radius-lg)",
-                    border: "1px solid var(--sf-ghost2-line)",
+                    border: "1px solid var(--ln-hair)",
+                    background: "var(--ln-canvas)",
                     zIndex: 0,
                     pointerEvents: "none",
                   }} />
-
                   {/* Ghost layer 1 */}
                   <div style={{
                     position: "absolute",
-                    left: 20,
-                    right: -10,
-                    top: 16,
-                    bottom: -14,
+                    left: 18,
+                    right: -9,
+                    top: 14,
+                    bottom: -12,
                     borderRadius: "var(--radius-lg)",
-                    border: "1px solid var(--color-neutral-900)",
-                    background: "var(--sf-ghost1)",
+                    border: "1px solid var(--ln-hair)",
+                    background: "var(--ln-s1)",
                     zIndex: 1,
                     pointerEvents: "none",
                   }} />
-
-                  {/* Main card */}
                   <HeroCard
                     sample={sample}
                     heroCard={heroCard}
@@ -332,10 +318,7 @@ export default function Home() {
 
             {/* Upload section */}
             <div style={{ ...W, padding: "0 40px" }}>
-              {/* Fading hairline */}
-              <hr className="sf-rule" style={{ margin: "96px 0 var(--space-8)" }} />
-
-              {/* Upload component */}
+              <hr className="sf-rule" style={{ margin: "96px 0 48px" }} />
               <div ref={uploadRef} style={{ maxWidth: 480 }}>
                 <FileUpload
                   onUploadComplete={setDocInfo}
@@ -344,12 +327,12 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Step bento grid */}
+            {/* Step grid */}
             <div style={{
               ...W,
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
-              gap: "var(--space-6)",
+              gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+              gap: 16,
               padding: "80px 40px 96px",
             }}>
               {STEPS.map(step => (
@@ -359,7 +342,7 @@ export default function Home() {
           </main>
         )}
 
-        {/* ── Generators (with doc) ───────────────── */}
+        {/* Generators */}
         {docInfo && (
           <section className="sf-generators" style={{ ...W, padding: "0 40px 100px", flex: 1 }}>
 
@@ -368,7 +351,7 @@ export default function Home() {
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
-              borderBottom: "1px solid var(--color-neutral-900)",
+              borderBottom: "1px solid var(--ln-hair)",
               marginBottom: 48,
               paddingTop: 40,
             }}>
@@ -381,32 +364,28 @@ export default function Home() {
                       background: "none",
                       border: "none",
                       borderBottom: activeTab === tab
-                        ? "2px solid var(--color-accent)"
+                        ? "2px solid var(--ln-accent)"
                         : "2px solid transparent",
                       padding: "10px 20px",
                       marginBottom: -1,
-                      fontSize: 13,
+                      fontSize: 14,
                       fontWeight: activeTab === tab ? 500 : 400,
-                      letterSpacing: ".06em",
-                      textTransform: "capitalize",
                       color: activeTab === tab
-                        ? "var(--color-text)"
-                        : "var(--color-neutral-500)",
+                        ? "var(--ln-ink)"
+                        : "var(--ln-ink-subtle)",
                       cursor: "pointer",
-                      transition: "color .18s, border-color .18s",
+                      textTransform: "capitalize",
+                      transition: "color .15s, border-color .15s",
                       fontFamily: "var(--font-body)",
+                      letterSpacing: 0,
                     }}
                   >
                     {tab}
                   </button>
                 ))}
               </div>
-              {docInfo.chunks > 0 && (
-                <span className="sf-label">{docInfo.chunks} chunks indexed</span>
-              )}
             </div>
 
-            {/* Active tab content */}
             <div key={activeTab} style={{ animation: "sf-in .2s ease both" }}>
               {activeTab === "notes"      && <NoteCard documentId={docInfo.documentId} index={1} />}
               {activeTab === "flashcards" && <FlashCardComponent documentId={docInfo.documentId} index={2} />}
@@ -415,36 +394,29 @@ export default function Home() {
           </section>
         )}
 
-        {/* ── Footer ──────────────────────────────── */}
+        {/* Footer */}
         <footer style={{
-          padding: "var(--space-6) 40px",
-          borderTop: "1px solid var(--color-neutral-900)",
+          padding: "24px 40px",
+          borderTop: "1px solid var(--ln-hair)",
           fontSize: 12,
-          color: "var(--color-neutral-700)",
+          color: "var(--ln-ink-tertiary)",
           display: "flex",
-          gap: "var(--space-8)",
+          gap: 32,
           flexWrap: "wrap",
         }}>
           <span>StudyForge</span>
-          <span>AI-powered study tool</span>
-          <span>Notes, flashcards, and quizzes generated via RAG from your own documents.</span>
+          <span>Notes, flashcards, and quizzes grounded in your own documents.</span>
         </footer>
       </div>
 
-      {/* ── Auth Modal ────────────────────────────── */}
       <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
     </div>
   );
 }
 
-/* ── Hero card component ─────────────────────────── */
+/* ── Hero card ───────────────────────────────────── */
 function HeroCard({
-  sample,
-  heroCard,
-  heroFlipped,
-  setHeroFlipped,
-  onNext,
-  total,
+  sample, heroCard, heroFlipped, setHeroFlipped, onNext, total,
 }: {
   sample: typeof SAMPLE_CARDS[0];
   heroCard: number;
@@ -463,48 +435,36 @@ function HeroCard({
       style={{
         position: "relative",
         zIndex: 2,
-        border: `1px solid ${hovered ? "var(--color-neutral-700)" : "var(--color-neutral-800)"}`,
+        border: `1px solid ${hovered ? "var(--ln-hair-strong)" : "var(--ln-hair)"}`,
         borderRadius: "var(--radius-lg)",
-        background: "linear-gradient(180deg, var(--sf-surface-top), var(--sf-fade))",
-        boxShadow: "var(--shadow-md)",
-        padding: "var(--space-8)",
+        background: "var(--ln-s1)",
+        padding: 32,
         overflow: "hidden",
         cursor: "pointer",
-        transform: hovered ? "translateY(-4px)" : "translateY(0)",
-        transition: "transform .5s cubic-bezier(.2,.7,.2,1), border-color .3s ease",
+        transform: hovered ? "translateY(-3px)" : "translateY(0)",
+        transition: "transform .4s cubic-bezier(.2,.7,.2,1), border-color .2s ease",
         userSelect: "none",
       }}
     >
-      {/* Accent edge-light */}
-      <div style={{
-        position: "absolute",
-        top: 0,
-        left: "18%",
-        right: "18%",
-        height: 1,
-        background: "linear-gradient(90deg, transparent, var(--color-accent), transparent)",
-        pointerEvents: "none",
-      }} />
-
-      {/* Card header row */}
+      {/* Card header */}
       <div style={{
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        marginBottom: "var(--space-6)",
+        marginBottom: 28,
       }}>
         <span style={{
-          fontSize: 11,
-          letterSpacing: ".10em",
+          fontSize: 12,
+          fontWeight: 500,
+          letterSpacing: "0.4px",
           textTransform: "uppercase",
-          color: "var(--color-neutral-600)",
+          color: "var(--ln-ink-subtle)",
         }}>
           {heroFlipped ? "Answer" : "Sample Card"}
         </span>
         <span style={{
-          fontSize: 11,
-          letterSpacing: ".08em",
-          color: "var(--color-neutral-600)",
+          fontSize: 12,
+          color: "var(--ln-ink-tertiary)",
           fontVariantNumeric: "tabular-nums",
         }}>
           {heroCard + 1}/{total}
@@ -513,23 +473,24 @@ function HeroCard({
 
       {/* Card face */}
       <div style={{
-        minHeight: 132,
+        minHeight: 120,
         display: "flex",
         alignItems: "center",
-        fontSize: 21,
+        fontSize: 20,
         fontWeight: 500,
-        lineHeight: 1.4,
-        transform: heroFlipped ? "rotateX(0) translateY(0)" : "rotateX(1.5deg) translateY(2px)",
-        transition: "transform .45s cubic-bezier(.2,.7,.2,1)",
+        lineHeight: 1.45,
+        letterSpacing: "-0.02em",
+        color: "var(--ln-ink)",
+        transition: "opacity .2s ease",
       }}>
         {heroFlipped ? sample.a : sample.q}
       </div>
 
-      {/* Hairline divider */}
+      {/* Divider */}
       <div style={{
         height: 1,
-        background: "linear-gradient(90deg, transparent, var(--color-neutral-800) 40px, var(--color-neutral-800) calc(100% - 40px), transparent)",
-        margin: "var(--space-8) 0",
+        background: "var(--ln-hair)",
+        margin: "24px 0",
       }} />
 
       {/* Card footer */}
@@ -537,22 +498,22 @@ function HeroCard({
         style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}
         onClick={e => e.stopPropagation()}
       >
-        <span style={{ fontSize: 12, color: "var(--color-neutral-600)" }}>
-          {heroFlipped ? `Source page ${sample.page}` : "Click the card to reveal"}
+        <span style={{ fontSize: 12, color: "var(--ln-ink-tertiary)" }}>
+          {heroFlipped ? `Source, page ${sample.page}` : "Click to reveal"}
         </span>
         <button
           className="sf-btn sf-btn-ghost"
-          style={{ fontSize: 12, padding: "6px 12px" }}
+          style={{ fontSize: 12, padding: "5px 10px" }}
           onClick={e => { e.stopPropagation(); onNext(); }}
         >
-          Next card
+          Next →
         </button>
       </div>
     </div>
   );
 }
 
-/* ── Step bento cell ─────────────────────────────── */
+/* ── Step cell ───────────────────────────────────── */
 function StepCell({ num, title, body }: { num: string; title: string; body: string }) {
   const [hovered, setHovered] = useState(false);
 
@@ -562,42 +523,33 @@ function StepCell({ num, title, body }: { num: string; title: string; body: stri
       onMouseLeave={() => setHovered(false)}
       style={{
         position: "relative",
-        overflow: "hidden",
-        border: `1px solid ${hovered ? "var(--color-neutral-700)" : "var(--color-neutral-900)"}`,
+        border: `1px solid ${hovered ? "var(--ln-hair-strong)" : "var(--ln-hair)"}`,
         borderRadius: "var(--radius-lg)",
-        padding: "var(--space-8)",
-        background: "linear-gradient(180deg, var(--sf-cell), var(--sf-fade))",
-        transform: hovered ? "translateY(-3px)" : "translateY(0)",
-        transition: "border-color .3s ease, transform .4s cubic-bezier(.2,.7,.2,1)",
+        padding: 24,
+        background: "var(--ln-s1)",
+        transform: hovered ? "translateY(-2px)" : "translateY(0)",
+        transition: "border-color .2s ease, transform .3s cubic-bezier(.2,.7,.2,1)",
         cursor: "default",
       }}
     >
-      {/* Accent edge-light (accent-600) */}
       <div style={{
-        position: "absolute",
-        top: 0,
-        left: "20%",
-        right: "20%",
-        height: 1,
-        background: "linear-gradient(90deg, transparent, var(--color-accent-600), transparent)",
-        pointerEvents: "none",
-      }} />
-
-      {/* Numeral */}
-      <div style={{
-        fontSize: 38,
-        fontWeight: 500,
-        letterSpacing: "-.04em",
-        color: "var(--color-accent-800)",
+        fontSize: 32,
+        fontWeight: 600,
+        letterSpacing: "-0.04em",
+        color: "var(--ln-hair-tertiary)",
         lineHeight: 1,
-        marginBottom: 40,
+        marginBottom: 36,
         fontVariantNumeric: "tabular-nums",
       }}>
         {num}
       </div>
 
-      <h3 style={{ fontSize: 17, fontWeight: 500, marginBottom: "var(--space-4)" }}>{title}</h3>
-      <p style={{ fontSize: 14, color: "var(--color-neutral-500)", lineHeight: 1.65 }}>{body}</p>
+      <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 10, color: "var(--ln-ink)", letterSpacing: "-0.01em" }}>
+        {title}
+      </h3>
+      <p style={{ fontSize: 14, color: "var(--ln-ink-subtle)", lineHeight: 1.6 }}>
+        {body}
+      </p>
     </div>
   );
 }

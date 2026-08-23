@@ -74,45 +74,44 @@ export default function FileUpload({ onUploadComplete, onDocumentAdded }: FileUp
     if (inputRef.current) inputRef.current.value = "";
   }
 
-  const isIdle     = state === "idle"     || state === "selected";
+  const isIdle      = state === "idle" || state === "selected";
   const isUploading = state === "uploading";
-  const isDone     = state === "done";
-  const isError    = state === "error";
+  const isDone      = state === "done";
+  const isError     = state === "error";
 
   return (
-    <div className="sf-panel" style={{ padding: 32, position: "relative" }}>
-      {/* Blueprint registration marks */}
+    <div className="sf-panel" style={{ padding: 28, position: "relative" }}>
       <span className="sf-reg sf-reg-tl" />
       <span className="sf-reg sf-reg-tr" />
       <span className="sf-reg sf-reg-bl" />
       <span className="sf-reg sf-reg-br" />
 
-      <p className="sf-kicker" style={{ marginBottom: 20 }}>Document Upload</p>
+      <p className="sf-kicker" style={{ marginBottom: 18 }}>Document Upload</p>
 
-      {/* ── Idle / Selected ── */}
+      {/* Idle / Selected */}
       {isIdle && (
         <>
           <div
             onClick={() => inputRef.current?.click()}
             style={{
-              border: `1.5px dashed ${state === "selected" ? "var(--color-accent)" : "var(--color-border)"}`,
-              borderRadius: 12,
-              padding: "40px 20px",
+              border: `1px dashed ${state === "selected" ? "var(--ln-accent)" : "var(--ln-hair-strong)"}`,
+              borderRadius: "var(--radius-lg)",
+              padding: "36px 20px",
               textAlign: "center",
               cursor: "pointer",
               background: state === "selected"
-                ? "color-mix(in srgb, var(--color-accent) 5%, transparent)"
+                ? "color-mix(in srgb, var(--ln-accent) 6%, transparent)"
                 : "transparent",
               transition: "border-color 0.15s, background 0.15s",
-              marginBottom: 16,
+              marginBottom: 14,
             }}
             onMouseEnter={e => {
               if (state !== "selected")
-                (e.currentTarget as HTMLDivElement).style.borderColor = "var(--color-accent)";
+                (e.currentTarget as HTMLDivElement).style.borderColor = "var(--ln-ink-subtle)";
             }}
             onMouseLeave={e => {
               if (state !== "selected")
-                (e.currentTarget as HTMLDivElement).style.borderColor = "var(--color-border)";
+                (e.currentTarget as HTMLDivElement).style.borderColor = "var(--ln-hair-strong)";
             }}
           >
             <input
@@ -124,34 +123,35 @@ export default function FileUpload({ onUploadComplete, onDocumentAdded }: FileUp
             />
             {state === "selected" && file ? (
               <>
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ margin: "0 auto 10px", display: "block" }} aria-hidden>
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--ln-accent)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ margin: "0 auto 10px", display: "block" }} aria-hidden>
                   <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
                   <polyline points="14 2 14 8 20 8"/>
                   <line x1="16" y1="13" x2="8" y2="13"/>
                   <line x1="16" y1="17" x2="8" y2="17"/>
-                  <polyline points="10 9 9 9 8 9"/>
                 </svg>
-                <p style={{ fontWeight: 700, marginBottom: 4, wordBreak: "break-all" }}>{file.name}</p>
-                <p style={{ fontSize: 12.5, color: "var(--color-muted)" }}>
+                <p style={{ fontSize: 14, fontWeight: 500, marginBottom: 4, wordBreak: "break-all", color: "var(--ln-ink)" }}>{file.name}</p>
+                <p style={{ fontSize: 12, color: "var(--ln-ink-subtle)" }}>
                   {(file.size / 1024).toFixed(0)} KB · Click to change
                 </p>
               </>
             ) : (
               <>
                 <div style={{
-                  width: 40, height: 40, borderRadius: 10,
-                  background: "var(--color-tag-bg)",
+                  width: 36, height: 36,
+                  borderRadius: "var(--radius-md)",
+                  background: "var(--ln-s2)",
+                  border: "1px solid var(--ln-hair)",
                   display: "flex", alignItems: "center", justifyContent: "center",
                   margin: "0 auto 14px",
                 }}>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--ln-accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
                     <polyline points="17 8 12 3 7 8"/>
                     <line x1="12" y1="3" x2="12" y2="15"/>
                   </svg>
                 </div>
-                <p style={{ fontWeight: 700, marginBottom: 4 }}>Click to select a file</p>
-                <p style={{ fontSize: 12.5, color: "var(--color-muted)" }}>PDF, DOCX, or TXT</p>
+                <p style={{ fontSize: 14, fontWeight: 500, marginBottom: 4, color: "var(--ln-ink)" }}>Click to select a file</p>
+                <p style={{ fontSize: 12, color: "var(--ln-ink-subtle)" }}>PDF, DOCX, or TXT</p>
               </>
             )}
           </div>
@@ -164,49 +164,48 @@ export default function FileUpload({ onUploadComplete, onDocumentAdded }: FileUp
           >
             Upload document
           </button>
-          <p style={{ marginTop: 10, fontSize: 12, color: "var(--color-muted)", textAlign: "center" }}>
-            {state === "selected"
-              ? "Standard · about 20 seconds"
-              : "Add a document to continue."}
+          <p style={{ marginTop: 10, fontSize: 12, color: "var(--ln-ink-tertiary)", textAlign: "center" }}>
+            {state === "selected" ? "Takes about 20 seconds" : "Add a document to continue."}
           </p>
         </>
       )}
 
-      {/* ── Uploading ── */}
+      {/* Uploading */}
       {isUploading && (
-        <div style={{ padding: "28px 0", textAlign: "center" }}>
+        <div style={{ padding: "24px 0", textAlign: "center" }}>
           <div style={{
-            width: 36, height: 36,
-            border: "3px solid var(--color-border)",
-            borderTopColor: "var(--color-accent)",
+            width: 32, height: 32,
+            border: "2px solid var(--ln-hair)",
+            borderTopColor: "var(--ln-accent)",
             borderRadius: "50%",
             animation: "sf-spin 0.75s linear infinite",
-            margin: "0 auto 18px",
+            margin: "0 auto 16px",
           }} />
-          <p style={{ fontWeight: 700, marginBottom: 6, wordBreak: "break-all" }}>{file?.name}</p>
+          <p style={{ fontWeight: 500, marginBottom: 6, wordBreak: "break-all", color: "var(--ln-ink)", fontSize: 14 }}>{file?.name}</p>
           <p className="sf-label">Uploading and indexing…</p>
           {slowWarning && (
-            <div className="sf-alert sf-alert-warm" style={{ marginTop: 18, textAlign: "left" }}>
-              Server is waking up. This can take 30 to 60 seconds on first request.
+            <div className="sf-alert sf-alert-warm" style={{ marginTop: 16, textAlign: "left" }}>
+              Server is waking up. This can take 30–60 seconds on first request.
             </div>
           )}
         </div>
       )}
 
-      {/* ── Done ── */}
+      {/* Done */}
       {isDone && result && (
         <>
-          <div className="sf-alert sf-alert-ok" style={{ marginBottom: 18 }}>
+          <div className="sf-alert sf-alert-ok" style={{ marginBottom: 16 }}>
             Document uploaded and indexed successfully.
           </div>
           <div style={{
-            background: "var(--color-input-bg)",
-            borderRadius: 10,
-            padding: "16px 18px",
+            background: "var(--ln-s2)",
+            border: "1px solid var(--ln-hair)",
+            borderRadius: "var(--radius-md)",
+            padding: "14px 16px",
             display: "flex",
             flexDirection: "column",
-            gap: 11,
-            marginBottom: 18,
+            gap: 10,
+            marginBottom: 16,
           }}>
             {([
               ["Filename",       result.filename],
@@ -217,8 +216,8 @@ export default function FileUpload({ onUploadComplete, onDocumentAdded }: FileUp
                 <span className="sf-label">{label}</span>
                 <span style={{
                   fontSize: 12,
-                  fontFamily: "monospace",
-                  color: "var(--color-text)",
+                  fontFamily: "var(--font-mono)",
+                  color: "var(--ln-ink-muted)",
                   wordBreak: "break-all",
                   textAlign: "right",
                   maxWidth: "60%",
@@ -232,10 +231,10 @@ export default function FileUpload({ onUploadComplete, onDocumentAdded }: FileUp
         </>
       )}
 
-      {/* ── Error ── */}
+      {/* Error */}
       {isError && (
         <>
-          <div className="sf-alert sf-alert-bad" style={{ marginBottom: 16 }}>{error}</div>
+          <div className="sf-alert sf-alert-bad" style={{ marginBottom: 14 }}>{error}</div>
           <button className="sf-btn sf-btn-ghost" style={{ width: "100%" }} onClick={reset}>
             Try again
           </button>

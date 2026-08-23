@@ -14,7 +14,6 @@ interface NoteCardProps {
   index: number;
 }
 
-/* ── Inline renderer — handles **bold** ─────────────── */
 function renderInline(text: string): React.ReactNode {
   const parts = text.split(/(\*\*[^*]+\*\*)/g);
   if (parts.length === 1) return text;
@@ -22,14 +21,13 @@ function renderInline(text: string): React.ReactNode {
     <>
       {parts.map((part, i) =>
         part.startsWith("**") && part.endsWith("**")
-          ? <strong key={i} style={{ fontWeight: 600, color: "var(--color-neutral-200)" }}>{part.slice(2, -2)}</strong>
+          ? <strong key={i} style={{ fontWeight: 600, color: "var(--ln-ink)" }}>{part.slice(2, -2)}</strong>
           : <span key={i}>{part}</span>
       )}
     </>
   );
 }
 
-/* ── Table renderer ──────────────────────────────────── */
 function NoteTable({ lines }: { lines: string[] }) {
   const isSeparator = (l: string) => /^\|[-:\s|]+\|$/.test(l.trim());
   const parsed = lines
@@ -48,12 +46,12 @@ function NoteTable({ lines }: { lines: string[] }) {
               <th key={i} style={{
                 padding: "8px 14px",
                 textAlign: "left",
-                fontSize: 11,
-                fontWeight: 600,
-                letterSpacing: ".1em",
+                fontSize: 12,
+                fontWeight: 500,
+                letterSpacing: "0.4px",
                 textTransform: "uppercase",
-                color: "var(--color-neutral-500)",
-                borderBottom: "1px solid var(--color-neutral-800)",
+                color: "var(--ln-ink-subtle)",
+                borderBottom: "1px solid var(--ln-hair)",
                 whiteSpace: "nowrap",
               }}>
                 {renderInline(h)}
@@ -67,8 +65,8 @@ function NoteTable({ lines }: { lines: string[] }) {
               {row.map((cell, ci) => (
                 <td key={ci} style={{
                   padding: "8px 14px",
-                  color: "var(--color-neutral-300)",
-                  borderBottom: "1px solid var(--color-neutral-900)",
+                  color: "var(--ln-ink-muted)",
+                  borderBottom: "1px solid var(--ln-hair)",
                   verticalAlign: "top",
                 }}>
                   {renderInline(cell)}
@@ -82,7 +80,6 @@ function NoteTable({ lines }: { lines: string[] }) {
   );
 }
 
-/* ── Content renderer ────────────────────────────────── */
 function renderContent(content: string): React.ReactNode[] {
   const lines = content.split("\n");
   const nodes: React.ReactNode[] = [];
@@ -95,7 +92,6 @@ function renderContent(content: string): React.ReactNode[] {
 
     if (!line) { i++; continue; }
 
-    // Table
     if (line.startsWith("|")) {
       const tableLines: string[] = [];
       while (i < lines.length && lines[i].trim().startsWith("|")) {
@@ -106,17 +102,16 @@ function renderContent(content: string): React.ReactNode[] {
       continue;
     }
 
-    // Heading (## or ###)
     const hMatch = line.match(/^(#{1,4})\s+(.+)/);
     if (hMatch) {
       const level = hMatch[1].length;
       const text = hMatch[2];
       nodes.push(
         <p key={key++} style={{
-          fontSize: level <= 2 ? 16 : 14,
+          fontSize: level <= 2 ? 15 : 13.5,
           fontWeight: 600,
-          letterSpacing: "-.01em",
-          color: "var(--color-neutral-200)",
+          letterSpacing: "-0.01em",
+          color: "var(--ln-ink)",
           marginTop: 20,
           marginBottom: 6,
         }}>
@@ -127,7 +122,6 @@ function renderContent(content: string): React.ReactNode[] {
       continue;
     }
 
-    // Bullet list
     if (/^[-*•]\s/.test(line)) {
       const items: string[] = [];
       while (i < lines.length && /^[-*•]\s/.test(lines[i].trim())) {
@@ -135,15 +129,9 @@ function renderContent(content: string): React.ReactNode[] {
         i++;
       }
       nodes.push(
-        <ul key={key++} style={{
-          paddingLeft: 18,
-          marginBottom: 14,
-          display: "flex",
-          flexDirection: "column",
-          gap: 5,
-        }}>
+        <ul key={key++} style={{ paddingLeft: 18, marginBottom: 14, display: "flex", flexDirection: "column", gap: 5 }}>
           {items.map((item, j) => (
-            <li key={j} style={{ fontSize: 14.5, lineHeight: 1.65, color: "var(--color-neutral-300)" }}>
+            <li key={j} style={{ fontSize: 14, lineHeight: 1.65, color: "var(--ln-ink-muted)" }}>
               {renderInline(item)}
             </li>
           ))}
@@ -152,7 +140,6 @@ function renderContent(content: string): React.ReactNode[] {
       continue;
     }
 
-    // Numbered list
     if (/^\d+\.\s/.test(line)) {
       const items: string[] = [];
       while (i < lines.length && /^\d+\.\s/.test(lines[i].trim())) {
@@ -160,15 +147,9 @@ function renderContent(content: string): React.ReactNode[] {
         i++;
       }
       nodes.push(
-        <ol key={key++} style={{
-          paddingLeft: 20,
-          marginBottom: 14,
-          display: "flex",
-          flexDirection: "column",
-          gap: 5,
-        }}>
+        <ol key={key++} style={{ paddingLeft: 20, marginBottom: 14, display: "flex", flexDirection: "column", gap: 5 }}>
           {items.map((item, j) => (
-            <li key={j} style={{ fontSize: 14.5, lineHeight: 1.65, color: "var(--color-neutral-300)" }}>
+            <li key={j} style={{ fontSize: 14, lineHeight: 1.65, color: "var(--ln-ink-muted)" }}>
               {renderInline(item)}
             </li>
           ))}
@@ -177,7 +158,6 @@ function renderContent(content: string): React.ReactNode[] {
       continue;
     }
 
-    // Regular paragraph — accumulate until blank / special
     const paraLines: string[] = [];
     while (
       i < lines.length &&
@@ -192,7 +172,7 @@ function renderContent(content: string): React.ReactNode[] {
     }
     if (paraLines.length) {
       nodes.push(
-        <p key={key++} style={{ fontSize: 14.5, lineHeight: 1.7, marginBottom: 14, color: "var(--color-neutral-300)" }}>
+        <p key={key++} style={{ fontSize: 14, lineHeight: 1.7, marginBottom: 14, color: "var(--ln-ink-muted)" }}>
           {renderInline(paraLines.join(" "))}
         </p>
       );
@@ -202,7 +182,6 @@ function renderContent(content: string): React.ReactNode[] {
   return nodes;
 }
 
-/* ── NoteCard component ──────────────────────────────── */
 export default function NoteCard({ documentId, index }: NoteCardProps) {
   const [topic,   setTopic]   = useState("");
   const [note,    setNote]    = useState<NoteData | null>(null);
@@ -226,23 +205,24 @@ export default function NoteCard({ documentId, index }: NoteCardProps) {
 
   return (
     <div className="sf-generator">
-      {/* ── Sidebar ── */}
+      {/* Sidebar */}
       <div>
         <span style={{
           fontFamily: "var(--font-heading)",
-          fontSize: 68,
-          fontWeight: 500,
-          color: "var(--sf-ink)",
+          fontSize: 56,
+          fontWeight: 600,
+          color: "var(--ln-hair-tertiary)",
           lineHeight: 1,
           display: "block",
-          marginBottom: 10,
+          marginBottom: 12,
           fontVariantNumeric: "tabular-nums",
+          letterSpacing: "-0.04em",
         }}>
           0{index}
         </span>
 
-        <h3 style={{ fontSize: 18, fontWeight: 500, letterSpacing: "-.01em", marginBottom: 12 }}>Notes</h3>
-        <p style={{ fontSize: 13.5, color: "var(--color-neutral-500)", lineHeight: 1.56, marginBottom: 24 }}>
+        <h3 style={{ fontSize: 16, fontWeight: 600, letterSpacing: "-0.01em", marginBottom: 8, color: "var(--ln-ink)" }}>Notes</h3>
+        <p style={{ fontSize: 13.5, color: "var(--ln-ink-subtle)", lineHeight: 1.56, marginBottom: 24 }}>
           A concise, structured summary of the most relevant content for your topic.
         </p>
 
@@ -253,7 +233,7 @@ export default function NoteCard({ documentId, index }: NoteCardProps) {
           value={topic}
           onChange={e => setTopic(e.target.value)}
           onKeyDown={e => e.key === "Enter" && handleGenerate()}
-          style={{ marginBottom: 12 }}
+          style={{ marginBottom: 10 }}
         />
         <button
           className="sf-btn sf-btn-primary"
@@ -265,19 +245,19 @@ export default function NoteCard({ documentId, index }: NoteCardProps) {
         </button>
       </div>
 
-      {/* ── Output ── */}
+      {/* Output */}
       <div className="sf-panel" style={{ padding: 32, minHeight: 180 }}>
 
         {/* Ghost */}
         {!note && !loading && !error && (
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-            <div className="skeleton" style={{ height: 20, width: "50%", opacity: 0.35 }} />
-            <div style={{ height: 6 }} />
-            <div className="skeleton" style={{ height: 13, width: "100%", opacity: 0.2 }} />
-            <div className="skeleton" style={{ height: 13, width: "90%",  opacity: 0.16 }} />
-            <div className="skeleton" style={{ height: 13, width: "80%",  opacity: 0.13 }} />
+            <div className="skeleton" style={{ height: 18, width: "48%", opacity: 0.6 }} />
+            <div style={{ height: 8 }} />
+            <div className="skeleton" style={{ height: 13, width: "100%", opacity: 0.4 }} />
+            <div className="skeleton" style={{ height: 13, width: "88%",  opacity: 0.3 }} />
+            <div className="skeleton" style={{ height: 13, width: "76%",  opacity: 0.2 }} />
             <div style={{ marginTop: 16 }}>
-              <p className="sf-label">Enter a topic on the left and click <strong style={{ fontWeight: 500, color: "var(--color-neutral-400)" }}>Generate notes</strong> to get started.</p>
+              <p className="sf-label">Enter a topic on the left and click <strong style={{ fontWeight: 500, color: "var(--ln-ink-subtle)" }}>Generate notes</strong> to get started.</p>
             </div>
           </div>
         )}
@@ -285,13 +265,13 @@ export default function NoteCard({ documentId, index }: NoteCardProps) {
         {/* Loading */}
         {loading && (
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-            <div className="skeleton" style={{ height: 22, width: "44%" }} />
-            <div style={{ height: 4 }} />
+            <div className="skeleton" style={{ height: 18, width: "44%" }} />
+            <div style={{ height: 6 }} />
             <div className="skeleton" style={{ height: 13, width: "100%" }} />
             <div className="skeleton" style={{ height: 13, width: "87%" }} />
             <div className="skeleton" style={{ height: 13, width: "94%" }} />
             <div className="skeleton" style={{ height: 13, width: "70%" }} />
-            <div style={{ marginTop: 10 }}>
+            <div style={{ marginTop: 12 }}>
               <p className="sf-label" style={{ animation: "sf-pulse 1.2s ease-in-out infinite" }}>
                 Retrieving relevant passages…
               </p>
@@ -299,7 +279,6 @@ export default function NoteCard({ documentId, index }: NoteCardProps) {
           </div>
         )}
 
-        {/* Error */}
         {error && <div className="sf-alert sf-alert-bad">{error}</div>}
 
         {/* Result */}
@@ -312,13 +291,13 @@ export default function NoteCard({ documentId, index }: NoteCardProps) {
               flexWrap: "wrap",
               marginBottom: 20,
             }}>
-              <h3 style={{ fontSize: 19, fontWeight: 500, letterSpacing: "-.01em" }}>{note.title}</h3>
+              <h3 style={{ fontSize: 18, fontWeight: 600, letterSpacing: "-0.02em", color: "var(--ln-ink)" }}>{note.title}</h3>
               {note.source_page != null && (
                 <span className="sf-tag">p. {note.source_page}</span>
               )}
             </div>
 
-            <div style={{ borderTop: "1px solid var(--color-neutral-900)", paddingTop: 20 }}>
+            <div style={{ borderTop: "1px solid var(--ln-hair)", paddingTop: 20 }}>
               {renderContent(note.content)}
             </div>
           </div>

@@ -36,10 +36,10 @@ export default function DocumentSidebar({
 
   return (
     <aside style={{
-      width: 240,
+      width: 220,
       flexShrink: 0,
-      borderRight: "1px solid var(--color-border)",
-      background: "var(--color-panel)",
+      borderRight: "1px solid var(--ln-hair)",
+      background: "var(--ln-canvas)",
       height: "100vh",
       position: "sticky",
       top: 0,
@@ -47,74 +47,72 @@ export default function DocumentSidebar({
       flexDirection: "column",
       overflowY: "auto",
     }}>
-      <div style={{ padding: "20px 16px 12px", borderBottom: "1px solid var(--color-border)" }}>
-        <p className="sf-kicker" style={{ marginBottom: 10 }}>My Documents</p>
+      <div style={{ padding: "16px 14px 12px", borderBottom: "1px solid var(--ln-hair)" }}>
+        <p className="sf-kicker" style={{ marginBottom: 10 }}>Documents</p>
         <button
-          className="sf-btn sf-btn-primary"
-          style={{ width: "100%", fontSize: 10 }}
+          className="sf-btn sf-btn-secondary"
+          style={{ width: "100%", fontSize: 13 }}
           onClick={onNewUpload}
         >
           + New upload
         </button>
       </div>
 
-      <div style={{ flex: 1, padding: "8px 0", overflowY: "auto" }}>
+      <div style={{ flex: 1, padding: "6px 0", overflowY: "auto" }}>
         {loading && (
-          <p style={{ padding: "12px 16px", fontSize: 12, color: "var(--color-muted)" }}>Loading…</p>
+          <p style={{ padding: "12px 14px", fontSize: 12, color: "var(--ln-ink-tertiary)" }}>Loading…</p>
         )}
         {error && (
-          <p style={{ padding: "12px 16px", fontSize: 12, color: "var(--sf-bad)" }}>{error}</p>
+          <p style={{ padding: "12px 14px", fontSize: 12, color: "var(--ln-error)" }}>{error}</p>
         )}
         {!loading && !error && docs.length === 0 && (
-          <p style={{ padding: "12px 16px", fontSize: 12, color: "var(--color-muted)" }}>
-            No documents yet. Upload one to get started.
+          <p style={{ padding: "12px 14px", fontSize: 12, color: "var(--ln-ink-tertiary)", lineHeight: 1.5 }}>
+            No documents yet.
           </p>
         )}
-        {docs.map(doc => (
-          <button
-            key={doc.document_id}
-            onClick={() => onSelectDocument(doc.document_id, doc.filename)}
-            style={{
-              display: "block",
-              width: "100%",
-              textAlign: "left",
-              background: doc.document_id === activeDocumentId
-                ? "color-mix(in srgb, var(--color-accent) 12%, transparent)"
-                : "transparent",
-              border: "none",
-              borderLeft: doc.document_id === activeDocumentId
-                ? "2px solid var(--color-accent)"
-                : "2px solid transparent",
-              cursor: "pointer",
-              padding: "10px 16px",
-              transition: "background 0.12s",
-            }}
-            onMouseEnter={e => {
-              if (doc.document_id !== activeDocumentId)
-                (e.currentTarget as HTMLButtonElement).style.background =
-                  "color-mix(in srgb, var(--color-border) 40%, transparent)";
-            }}
-            onMouseLeave={e => {
-              if (doc.document_id !== activeDocumentId)
-                (e.currentTarget as HTMLButtonElement).style.background = "transparent";
-            }}
-          >
-            <p style={{
-              fontSize: 12,
-              fontWeight: 600,
-              color: "var(--color-text)",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
-              marginBottom: 2,
-            }}>
-              {doc.filename}
-            </p>
-            <p style={{ fontSize: 11, color: "var(--color-muted)" }}>
-              {new Date(doc.uploaded_at).toLocaleDateString()}
-            </p>
-          </button>
-        ))}
+        {docs.map(doc => {
+          const isActive = doc.document_id === activeDocumentId;
+          return (
+            <button
+              key={doc.document_id}
+              onClick={() => onSelectDocument(doc.document_id, doc.filename)}
+              style={{
+                display: "block",
+                width: "100%",
+                textAlign: "left",
+                background: isActive ? "var(--ln-s1)" : "transparent",
+                border: "none",
+                borderLeft: `2px solid ${isActive ? "var(--ln-accent)" : "transparent"}`,
+                cursor: "pointer",
+                padding: "9px 14px 9px 12px",
+                transition: "background 0.1s",
+              }}
+              onMouseEnter={e => {
+                if (!isActive)
+                  (e.currentTarget as HTMLButtonElement).style.background = "var(--ln-s1)";
+              }}
+              onMouseLeave={e => {
+                if (!isActive)
+                  (e.currentTarget as HTMLButtonElement).style.background = "transparent";
+              }}
+            >
+              <p style={{
+                fontSize: 12,
+                fontWeight: isActive ? 500 : 400,
+                color: isActive ? "var(--ln-ink)" : "var(--ln-ink-muted)",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+                marginBottom: 2,
+              }}>
+                {doc.filename}
+              </p>
+              <p style={{ fontSize: 11, color: "var(--ln-ink-tertiary)" }}>
+                {new Date(doc.uploaded_at).toLocaleDateString()}
+              </p>
+            </button>
+          );
+        })}
       </div>
     </aside>
   );
