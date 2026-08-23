@@ -138,7 +138,7 @@ export default function Home() {
       />
 
       {/* ── Main ──────────────────────────────────── */}
-      <div style={{ flex: 1, minWidth: 0 }}>
+      <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", minHeight: "100vh" }}>
 
         {/* ── Header ──────────────────────────────── */}
         <header
@@ -220,7 +220,7 @@ export default function Home() {
 
         {/* ── Landing (no doc) ────────────────────── */}
         {!docInfo && (
-          <main>
+          <main style={{ flex: 1 }}>
             {/* Hero section */}
             <div style={{
               backgroundImage: "radial-gradient(120% 80% at 78% -10%, var(--sf-hero-grad) 0%, transparent 62%)",
@@ -361,7 +361,7 @@ export default function Home() {
 
         {/* ── Generators (with doc) ───────────────── */}
         {docInfo && (
-          <section className="sf-generators" style={{ ...W, padding: "0 40px 100px" }}>
+          <section className="sf-generators" style={{ ...W, padding: "0 40px 100px", flex: 1 }}>
 
             {/* Tab bar */}
             <div style={{
